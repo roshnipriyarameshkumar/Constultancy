@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Amsam Textiles Login'),
+        title: const Text('Amsam Textiles Login!'),
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
