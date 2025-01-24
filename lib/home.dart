@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-
+import 'signup.dart'; // Import the signup page
+import 'addtocart.dart';
+import 'profile.dart';
 void main() {
   runApp(const TextileStoreApp());
 }
@@ -18,12 +20,37 @@ class TextileStoreApp extends StatelessWidget {
         textTheme: const TextTheme(bodyMedium: TextStyle(fontFamily: 'Poppins')),
       ),
       home: const HomePage(),
+      routes: {
+        '/signup': (context) => const SignupPage(),
+      },
     );
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<String> wishlist = [];
+  List<String> cart = [];
+
+  void addToWishlist(String product) {
+    setState(() {
+      if (!wishlist.contains(product)) {
+        wishlist.add(product);
+      }
+    });
+  }
+
+  void addToCart(String product) {
+    setState(() {
+      cart.add(product);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +72,29 @@ class HomePage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              // Navigate to cart page
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AddToCartPage()), // Navigate to SignUpPage
+              );
+            },
             icon: const Icon(Icons.shopping_cart, color: Colors.black),
+          ),
+          IconButton(
+            onPressed: () {
+              // Show notifications
+            },
+            icon: const Icon(Icons.notifications, color: Colors.black),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SignupPage()), // Navigate to SignUpPage
+              );
+            },
+            icon: const Icon(Icons.login, color: Colors.black), // Login icon
           ),
         ],
       ),
@@ -76,7 +124,9 @@ class HomePage extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.favorite),
               title: const Text('Wishlist'),
-              onTap: () {},
+              onTap: () {
+                // Navigate to Wishlist Page
+              },
             ),
             ListTile(
               leading: const Icon(Icons.person),
@@ -170,8 +220,7 @@ class HomePage extends StatelessWidget {
               ),
             ),
 
-
-            // Promotional Section
+            // Clearance Sale and Offers Section
             Padding(
               padding: const EdgeInsets.all(10),
               child: Card(
@@ -194,11 +243,11 @@ class HomePage extends StatelessWidget {
               ),
             ),
 
-            // Featured Products Section
+            // Best Selling Products Section
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
-                'Featured Products',
+                'Best Selling Products',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
@@ -206,7 +255,7 @@ class HomePage extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: List.generate(
-                  5,
+                  3,
                       (index) => Card(
                     margin: const EdgeInsets.all(10),
                     child: SizedBox(
@@ -218,7 +267,7 @@ class HomePage extends StatelessWidget {
                             height: 120,
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage('assets/WhatsApp Image 2025-01-17 at 17.47.53.jpeg${index + 1}.jpg'),
+                                image: AssetImage('assets/WhatsApp Image 2025-01-17 at 17.47.53.jpeg'),
                                 fit: BoxFit.cover,
                               ),
                               borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
@@ -230,7 +279,7 @@ class HomePage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Product ${index + 1}',
+                                  'Best Seller ${index + 1}',
                                   style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 5),
@@ -239,13 +288,24 @@ class HomePage extends StatelessWidget {
                                   style: const TextStyle(fontSize: 14, color: Colors.indigo),
                                 ),
                                 const SizedBox(height: 5),
-                                ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.indigo,
-                                    minimumSize: const Size(double.infinity, 30),
-                                  ),
-                                  child: const Text('Add to Cart'),
+                                Row(
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () => addToCart('Best Seller ${index + 1}'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.indigo,
+                                        minimumSize: const Size(70, 30),
+                                      ),
+                                      child: const Text('Add to Cart'),
+                                    ),
+                                    IconButton(
+                                      onPressed: () => addToWishlist('Best Seller ${index + 1}'),
+                                      icon: Icon(
+                                        wishlist.contains('Best Seller ${index + 1}') ? Icons.favorite : Icons.favorite_border,
+                                        color: Colors.indigo,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -258,32 +318,76 @@ class HomePage extends StatelessWidget {
               ),
             ),
 
-            // Testimonials Section
+            // Highly Rated Products Section
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
-                'What Our Customers Say',
+                'Highly Rated Products',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    children: const [
-                      Text(
-                        '"The best textile store I’ve ever visited! Amazing collection and great prices!"',
-                        style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
-                        textAlign: TextAlign.center,
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: List.generate(
+                  3,
+                      (index) => Card(
+                    margin: const EdgeInsets.all(10),
+                    child: SizedBox(
+                      width: 150,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 120,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/WhatsApp Image 2025-01-17 at 17.47.53.jpeg'),
+                                fit: BoxFit.cover,
+                              ),
+                              borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Highly Rated ${index + 1}',
+                                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  '₹${(index + 1) * 700}',
+                                  style: const TextStyle(fontSize: 14, color: Colors.indigo),
+                                ),
+                                const SizedBox(height: 5),
+                                Row(
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () => addToCart('Highly Rated ${index + 1}'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.indigo,
+                                        minimumSize: const Size(70, 30),
+                                      ),
+                                      child: const Text('Add to Cart'),
+                                    ),
+                                    IconButton(
+                                      onPressed: () => addToWishlist('Highly Rated ${index + 1}'),
+                                      icon: Icon(
+                                        wishlist.contains('Highly Rated ${index + 1}') ? Icons.favorite : Icons.favorite_border,
+                                        color: Colors.indigo,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 10),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Text('- Happy Customer', style: TextStyle(color: Colors.indigo)),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -291,18 +395,28 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Shop'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Wishlist'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-        selectedItemColor: Colors.indigo,
-        unselectedItemColor: Colors.grey,
-      ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: 0,
+          type: BottomNavigationBarType.fixed,
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+            BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Shop'),
+            BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Wishlist'),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          ],
+          selectedItemColor: Colors.indigo,
+          unselectedItemColor: Colors.grey,
+          onTap: (index) {
+            if (index == 3) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfilePage()), // Navigate to ProfilePage
+              );
+            }
+            // If needed, you can handle other tabs here (Home, Shop, Wishlist).
+          },
+        ),
+
     );
   }
 }

@@ -1,61 +1,52 @@
 import 'package:flutter/material.dart';
+import 'home.dart'; // Import Home Page
+import 'signup.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  void _login() {
-    String email = _emailController.text;
-    String password = _passwordController.text;
-
-    if (email == "admin@amsam.com" && password == "12345") {
-      // Simulate successful login
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Login Successful!")),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Invalid Email or Password")),
-      );
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final _loginEmailController = TextEditingController();
+    final _loginPasswordController = TextEditingController();
+
+    void _login() {
+      String email = _loginEmailController.text;
+      String password = _loginPasswordController.text;
+
+      if (email.isNotEmpty && password.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Login Successful!")),
+        );
+        // After login, navigate to HomePage
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please fill in both fields")),
+        );
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Amsam Textiles Login!'),
+        title: const Text('Login to Amsam Tex'),
         centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Colors.teal,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Welcome to Amsam Textiles',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
             const SizedBox(height: 20),
             TextField(
-              controller: _emailController,
+              controller: _loginEmailController,
               decoration: InputDecoration(
                 labelText: 'Email',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 prefixIcon: const Icon(Icons.email),
               ),
@@ -63,11 +54,11 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 20),
             TextField(
-              controller: _passwordController,
+              controller: _loginPasswordController,
               decoration: InputDecoration(
                 labelText: 'Password',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 prefixIcon: const Icon(Icons.lock),
               ),
@@ -77,14 +68,34 @@ class _LoginPageState extends State<LoginPage> {
             ElevatedButton(
               onPressed: _login,
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 15),
+                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                backgroundColor: Colors.teal,
+                elevation: 5,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
               child: const Text(
                 'Login',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextButton(
+              onPressed: () {
+                // Navigate to SignupPage when clicked
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignupPage()),
+                );
+              },
+              child: const Text(
+                'Don’t have an account? Sign Up',
+                style: TextStyle(fontSize: 16, color: Colors.teal),
               ),
             ),
           ],
