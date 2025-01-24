@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-//import 'package:carousel_slider/carousel_slider.dart';
+import 'addtocart.dart'; // Import AddToCartPage
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
         title: TextField(
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.teal,
+            fillColor: Colors.teal[50],
             prefixIcon: const Icon(Icons.search),
             hintText: 'Search textiles, sarees...',
             border: OutlineInputBorder(
@@ -141,31 +141,7 @@ class HomePage extends StatelessWidget {
               ),
             ),
 
-
-            // Promotional Section
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Card(
-                color: Colors.indigo[50],
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Row(
-                    children: const [
-                      Icon(Icons.local_offer, color: Colors.teal, size: 30),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          'Flat 50% Off on Sarees - Limited Time Offer!',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.teal),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            // Featured Products Section (Without Carousel)
+            // Featured Products Section
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
@@ -211,7 +187,12 @@ class HomePage extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 5),
                                 ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const AddToCartPage()),
+                                    );
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.teal,
                                     minimumSize: const Size(double.infinity, 30),
@@ -224,38 +205,6 @@ class HomePage extends StatelessWidget {
                         ],
                       ),
                     ),
-                  ),
-                ),
-              ),
-            ),
-
-
-            // Testimonials Section
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text(
-                'What Our Customers Say',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    children: const [
-                      Text(
-                        '"The best textile store I’ve ever visited! Amazing collection and great prices!"',
-                        style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 10),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Text('- Happy Customer', style: TextStyle(color: Colors.teal)),
-                      ),
-                    ],
                   ),
                 ),
               ),
