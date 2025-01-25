@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'signup.dart'; // Import the signup page
 import 'addtocart.dart';
 import 'profile.dart';
+
 void main() {
   runApp(const TextileStoreApp());
 }
@@ -73,10 +74,9 @@ class _HomePageState extends State<HomePage> {
         actions: [
           IconButton(
             onPressed: () {
-              // Navigate to cart page
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AddToCartPage()), // Navigate to SignUpPage
+                MaterialPageRoute(builder: (context) => const AddToCartPage()),
               );
             },
             icon: const Icon(Icons.shopping_cart, color: Colors.black),
@@ -91,10 +91,10 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const SignupPage()), // Navigate to SignUpPage
+                MaterialPageRoute(builder: (context) => const SignupPage()),
               );
             },
-            icon: const Icon(Icons.login, color: Colors.black), // Login icon
+            icon: const Icon(Icons.login, color: Colors.black),
           ),
         ],
       ),
@@ -107,31 +107,49 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.indigo,
               ),
               child: const Text(
-                'Amsam Tex Store',
+                'Amsam Textiles',
                 style: TextStyle(color: Colors.white, fontSize: 24),
               ),
             ),
             ListTile(
               leading: const Icon(Icons.home),
               title: const Text('Home'),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
+              },
             ),
             ListTile(
               leading: const Icon(Icons.store),
               title: const Text('Shop'),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
+              },
             ),
             ListTile(
               leading: const Icon(Icons.favorite),
               title: const Text('Wishlist'),
               onTap: () {
-                // Navigate to Wishlist Page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
               },
             ),
             ListTile(
               leading: const Icon(Icons.person),
               title: const Text('Profile'),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfilePage()),
+                );
+              },
             ),
           ],
         ),
@@ -140,7 +158,6 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Location Section
             Padding(
               padding: const EdgeInsets.all(10),
               child: Row(
@@ -160,8 +177,6 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-
-            // Categories Section
             Container(
               padding: const EdgeInsets.symmetric(vertical: 15),
               color: Colors.indigo[50],
@@ -191,15 +206,14 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-
-            // Carousel Section
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 15),
               child: CarouselSlider(
                 items: [
-                  'assets/images1.jpeg',
-                  'assets/images1.jpeg',
-                  'assets/images1.jpeg',
+                  'assets/image3.jpeg',
+                  'assets/image4.avif',
+                  'assets/image5.avif',
+                  'assets/image6.avif'
                 ].map((image) {
                   return Container(
                     margin: const EdgeInsets.symmetric(horizontal: 5),
@@ -219,8 +233,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-
-            // Clearance Sale and Offers Section
             Padding(
               padding: const EdgeInsets.all(10),
               child: Card(
@@ -242,8 +254,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-
-            // Best Selling Products Section
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
@@ -267,7 +277,13 @@ class _HomePageState extends State<HomePage> {
                             height: 120,
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage('assets/WhatsApp Image 2025-01-17 at 17.47.53.jpeg'),
+                                image: AssetImage(
+                                  [
+                                    'assets/download.jpeg',
+                                    'assets/image1.jpg',
+                                    'assets/image2.webp',
+                                  ][index],
+                                ),
                                 fit: BoxFit.cover,
                               ),
                               borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
@@ -317,8 +333,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-
-            // Highly Rated Products Section
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
@@ -342,7 +356,11 @@ class _HomePageState extends State<HomePage> {
                             height: 120,
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage('assets/WhatsApp Image 2025-01-17 at 17.47.53.jpeg'),
+                                image: AssetImage([
+                                  'assets/images1.jpeg', // Image 1
+                                  'assets/image2.webp', // Image 2
+                                  'assets/download.jpeg', // Image 3
+                                ][index]), // Get image based on index
                                 fit: BoxFit.cover,
                               ),
                               borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
@@ -391,32 +409,31 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-            ),
+            )
+            ,
           ],
         ),
       ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: 0,
-          type: BottomNavigationBarType.fixed,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Shop'),
-            BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Wishlist'),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-          ],
-          selectedItemColor: Colors.indigo,
-          unselectedItemColor: Colors.grey,
-          onTap: (index) {
-            if (index == 3) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ProfilePage()), // Navigate to ProfilePage
-              );
-            }
-            // If needed, you can handle other tabs here (Home, Shop, Wishlist).
-          },
-        ),
-
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0,
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Explore'),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Wishlist'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
+        selectedItemColor: Colors.indigo,
+        unselectedItemColor: Colors.grey,
+        onTap: (index) {
+          if (index == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProfilePage()),
+            );
+          }
+        },
+      ),
     );
   }
 }

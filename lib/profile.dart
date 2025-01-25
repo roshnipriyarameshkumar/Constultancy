@@ -21,12 +21,12 @@ class ProfilePage extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             const Text(
-              'John Doe', // Replace with dynamic username
+              'Yukesh', // Replace with dynamic username
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 5),
             const Text(
-              'johndoe@example.com', // Replace with dynamic email
+              'Yukesh@gmail.com', // Replace with dynamic email
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             const SizedBox(height: 20),
