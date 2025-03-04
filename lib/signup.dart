@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'login.dart';  // Import the Login Page
 import 'home.dart';   // Import the Home Page
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 
 class SignupPage extends StatelessWidget {
   const SignupPage({super.key});
@@ -11,20 +14,33 @@ class SignupPage extends StatelessWidget {
     final _signupPasswordController = TextEditingController();
     final _confirmPasswordController = TextEditingController();
 
-    void _signup() {
+    void _signup() async {
       String email = _signupEmailController.text;
       String password = _signupPasswordController.text;
       String confirmPassword = _confirmPasswordController.text;
 
       if (email.isNotEmpty && password == confirmPassword) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Account Created Successfully!")),
-        );
-        // Ensure HomePage constructor does not have `const` if not needed
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
+        // Save user details to Firestore
+        try {
+          await FirebaseFirestore.instance.collection('users').doc(email).set({
+            'email': email,
+            'password': password, // Consider hashing passwords in real apps
+            'createdAt': Timestamp.now(),
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Account Created Successfully!")),
+          );
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+          );
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error: $e")),
+          );
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Passwords do not match!")),
