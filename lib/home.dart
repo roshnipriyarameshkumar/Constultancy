@@ -9,8 +9,8 @@ import 'DressMaterialsPage.dart';
 import 'KidswearPage.dart';
 import 'BlousePage.dart';
 import 'LinenMaterials.dart';
-
-
+import 'ExplorePage.dart';
+import 'NotificationPage.dart';
 class TextileStoreApp extends StatelessWidget {
   const TextileStoreApp({super.key});
 
@@ -86,7 +86,10 @@ class _HomePageState extends State<HomePage> {
           ),
           IconButton(
             onPressed: () {
-              // Show notifications
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NotificationsPage()),
+              );
             },
             icon: const Icon(Icons.notifications, color: Colors.black),
           ),
@@ -468,7 +471,22 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: Colors.indigo,
         unselectedItemColor: Colors.grey,
         onTap: (index) {
-          if (index == 3) {
+          if (index == 0) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+            );
+          } else if (index == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ExplorePage()),
+            );
+          } else if (index == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+            );
+          } else if (index == 3) {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ProfilePage()),
@@ -476,6 +494,7 @@ class _HomePageState extends State<HomePage> {
           }
         },
       ),
+
     );
   }
 }
