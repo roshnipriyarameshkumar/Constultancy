@@ -4,6 +4,11 @@ import 'signup.dart'; // Import the signup page
 import 'addtocart.dart';
 import 'profile.dart';
 import 'SareesPage.dart';
+import 'ShirtsPage.dart';
+import 'DressMaterialsPage.dart';
+import 'KidswearPage.dart';
+import 'BlousePage.dart';
+import 'LinenMaterials.dart';
 
 void main() {
   runApp(const TextileStoreApp());
@@ -194,19 +199,19 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => const SareesPage()));
                         break;
                       case 1:
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SareesPage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ShirtsPage()));
                         break;
                       case 2:
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SareesPage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => DressMaterialsPage()));
                         break;
                       case 3:
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SareesPage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => KidsWearPage()));
                         break;
                       case 4:
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SareesPage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => BlousesPage()));
                         break;
                       case 5:
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SareesPage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => LinenWearPage()));
                         break;
                     }
                   },

@@ -1,105 +1,95 @@
 import 'package:flutter/material.dart';
 
-class SareesPage extends StatelessWidget {
-  const SareesPage({super.key});
+class BlousesPage extends StatelessWidget {
+  const BlousesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> sarees = [
+    List<Map<String, dynamic>> blouses = [
       {
-        'name': 'Banarasi Silk Saree',
+        'name': 'Elegant White Silk Blouse',
         'image': 'assets/image1.jpg',
-        'price': 4500,
-        'description':
-        'A luxurious Banarasi silk saree with golden zari work. Perfect for weddings and festive occasions.',
-        'fabric': 'Pure Silk',
-        'origin': 'Varanasi, India'
+        'price': 2500,
+        'description': 'A sophisticated white silk blouse, perfect for formal occasions and parties.',
+        'fabric': 'Silk Blend',
+        'origin': 'India'
       },
       {
-        'name': 'Kanjivaram Saree',
+        'name': 'Casual Checked Cotton Blouse',
         'image': 'assets/image3.jpeg',
-        'price': 5000,
-        'description':
-        'A handwoven Kanjivaram saree with intricate temple border designs.',
-        'fabric': 'Silk',
-        'origin': 'Tamil Nadu, India'
-      },
-      {
-        'name': 'Chiffon Saree',
-        'image': 'assets/image2.webp',
-        'price': 1800,
-        'description':
-        'A lightweight chiffon saree with floral prints, perfect for summer outings.',
-        'fabric': 'Chiffon',
-        'origin': 'Surat, India'
-      },
-      {
-        'name': 'Cotton Handloom Saree',
-        'image': 'assets/image4.avif',
-        'price': 2200,
-        'description':
-        'A breathable cotton handloom saree, best for casual and office wear.',
-        'fabric': 'Cotton',
-        'origin': 'West Bengal, India'
-      },
-      {
-        'name': 'Georgette Party Saree',
-        'image': 'assets/image5.avif',
-        'price': 3000,
-        'description':
-        'A stunning georgette saree with sequins and embroidery, ideal for parties.',
-        'fabric': 'Georgette',
-        'origin': 'Mumbai, India'
-      },
-      {
-        'name': 'Patola Saree',
-        'image': 'assets/image6.avif',
-        'price': 5500,
-        'description':
-        'A rich and vibrant Patola saree with double ikat weaving technique.',
-        'fabric': 'Silk',
-        'origin': 'Gujarat, India'
-      },
-      {
-        'name': 'Tussar Silk Saree',
-        'image': 'assets/download.jpeg',
-        'price': 4000,
-        'description':
-        'A natural and eco-friendly Tussar silk saree with earthy tones.',
-        'fabric': 'Tussar Silk',
-        'origin': 'Bihar, India'
-      },
-      {
-        'name': 'Linen Saree',
-        'image': 'assets/images1.jpeg',
-        'price': 2700,
-        'description':
-        'A simple yet elegant linen saree with minimalistic prints.',
-        'fabric': 'Linen',
-        'origin': 'Kolkata, India'
-      },
-      {
-        'name': 'Bandhani Saree',
-        'image': 'assets/image1.jpg',
         'price': 2800,
-        'description':
-        'A traditional Bandhani saree with tie-dye patterns in vibrant colors.',
-        'fabric': 'Cotton & Silk Blend',
-        'origin': 'Rajasthan, India'
+        'description': 'A stylish checked cotton blouse for everyday comfort and casual wear.',
+        'fabric': 'Cotton',
+        'origin': 'India'
       },
       {
-        'name': 'Bhagalpuri Silk Saree',
-        'image': 'assets/image3.jpeg',
+        'name': 'Denim Style Trendy Blouse',
+        'image': 'assets/image2.webp',
+        'price': 3000,
+        'description': 'A modern denim-style blouse for a chic and trendy look.',
+        'fabric': 'Denim Blend',
+        'origin': 'India'
+      },
+      {
+        'name': 'Linen Summer Blouse',
+        'image': 'assets/image4.avif',
         'price': 3200,
-        'description':
-        'A lightweight Bhagalpuri silk saree with a unique glossy texture.',
-        'fabric': 'Silk',
-        'origin': 'Bhagalpur, India'
+        'description': 'A breathable linen blouse, perfect for warm summer days.',
+        'fabric': 'Linen',
+        'origin': 'India'
+      },
+      {
+        'name': 'Striped Casual Blouse',
+        'image': 'assets/image5.avif',
+        'price': 2600,
+        'description': 'A comfortable striped blouse, ideal for casual outings.',
+        'fabric': 'Cotton',
+        'origin': 'India'
+      },
+      {
+        'name': 'Floral Printed Blouse',
+        'image': 'assets/image6.avif',
+        'price': 2750,
+        'description': 'A vibrant floral print blouse, adding a feminine touch to your wardrobe.',
+        'fabric': 'Rayon',
+        'origin': 'India'
+      },
+      {
+        'name': 'Comfortable Everyday Blouse',
+        'image': 'assets/download.jpeg',
+        'price': 2300,
+        'description': 'A soft and cozy blouse for effortless daily wear.',
+        'fabric': 'Cotton',
+        'origin': 'India'
+      },
+      {
+        'name': 'Mandarin Collar Blouse',
+        'image': 'assets/images1.jpeg',
+        'price': 2900,
+        'description': 'A refined mandarin collar blouse, perfect for an elegant look.',
+        'fabric': 'Cotton Linen Blend',
+        'origin': 'India'
+      },
+      {
+        'name': 'Half Sleeve Beach Blouse',
+        'image': 'assets/image1.jpg',
+        'price': 2700,
+        'description': 'A lightweight and stylish blouse, ideal for beachside vacations.',
+        'fabric': 'Polyester Blend',
+        'origin': 'India'
+      },
+      {
+        'name': 'Classic Oxford Blouse',
+        'image': 'assets/image3.jpeg',
+        'price': 3100,
+        'description': 'A timeless Oxford-style blouse for a polished appearance.',
+        'fabric': 'Oxford Cotton',
+        'origin': 'India'
       },
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Sarees Collection")),
+      appBar: AppBar(title: const Text("Blouses Collection")),
       body: GridView.builder(
         padding: const EdgeInsets.all(10),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -108,14 +98,14 @@ class SareesPage extends StatelessWidget {
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
         ),
-        itemCount: sarees.length,
+        itemCount: blouses.length,
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SareeDetailPage(saree: sarees[index]),
+                  builder: (context) => BlouseDetailPage(blouse: blouses[index]),
                 ),
               );
             },
@@ -126,7 +116,7 @@ class SareesPage extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Image.asset(
-                      sarees[index]['image'],
+                      blouses[index]['image'],
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -136,11 +126,11 @@ class SareesPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          sarees[index]['name'],
+                          blouses[index]['name'],
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        Text("₹${sarees[index]['price']}",
+                        Text("₹${blouses[index]['price']}",
                             style: const TextStyle(
                                 fontSize: 14, color: Colors.green)),
                         Row(
@@ -169,14 +159,14 @@ class SareesPage extends StatelessWidget {
   }
 }
 
-class SareeDetailPage extends StatelessWidget {
-  final Map<String, dynamic> saree;
-  const SareeDetailPage({super.key, required this.saree});
+class BlouseDetailPage extends StatelessWidget {
+  final Map<String, dynamic> blouse;
+  const BlouseDetailPage({super.key, required this.blouse});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(saree['name'])),
+      appBar: AppBar(title: Text(blouse['name'])),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -184,48 +174,32 @@ class SareeDetailPage extends StatelessWidget {
           children: [
             Center(
               child: Image.asset(
-                saree['image'],
+                blouse['image'],
                 height: 250,
                 fit: BoxFit.cover,
               ),
             ),
             const SizedBox(height: 10),
             Text(
-              saree['name'],
+              blouse['name'],
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             Text(
-              "₹${saree['price']}",
+              "₹${blouse['price']}",
               style: const TextStyle(fontSize: 18, color: Colors.green),
             ),
             const SizedBox(height: 10),
             Text(
-              saree['description'],
+              blouse['description'],
               style: const TextStyle(fontSize: 16),
             ),
             Text(
-              "Fabric: ${saree['fabric']}",
+              "Fabric: ${blouse['fabric']}",
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Text(
-              "Origin: ${saree['origin']}",
+              "Origin: ${blouse['origin']}",
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.favorite_border),
-                  label: const Text("Add to Wishlist"),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.add_shopping_cart),
-                  label: const Text("Add to Cart"),
-                ),
-              ],
             ),
           ],
         ),
