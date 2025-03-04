@@ -5,9 +5,6 @@ import 'addtocart.dart';
 import 'profile.dart';
 import 'SareesPage.dart';
 
-void main() {
-  runApp(const TextileStoreApp());
-}
 
 class TextileStoreApp extends StatelessWidget {
   const TextileStoreApp({super.key});
