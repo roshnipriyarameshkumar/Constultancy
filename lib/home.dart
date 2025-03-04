@@ -101,8 +101,7 @@ class _HomePageState extends State<HomePage> {
               );
             },
             icon: const Icon(Icons.login, color: Colors.black),
-          ),
-        ],
+          ),      ],
       ),
       drawer: Drawer(
         child: ListView(
