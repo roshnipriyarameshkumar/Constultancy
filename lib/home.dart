@@ -225,7 +225,7 @@ class _HomePageState extends State<HomePage> {
                             'assets/download.jpeg'
                           ][index]),
                         ),
-                        const SizedBox(height: 5),
+                        const SizedBox(height: 5 ),
                         Text(
                           [
                             'Sarees',
