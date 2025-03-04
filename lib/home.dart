@@ -10,9 +10,6 @@ import 'KidswearPage.dart';
 import 'BlousePage.dart';
 import 'LinenMaterials.dart';
 
-void main() {
-  runApp(const TextileStoreApp());
-}
 
 class TextileStoreApp extends StatelessWidget {
   const TextileStoreApp({super.key});
