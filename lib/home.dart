@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'signup.dart'; // Import the signup page
 import 'addtocart.dart';
 import 'profile.dart';
+import 'SareesPage.dart';
 
 void main() {
   runApp(const TextileStoreApp());
@@ -177,35 +178,74 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 15),
-              color: Colors.indigo[50],
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: List.generate(
-                    6,
-                        (index) => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 40,
-                            backgroundColor: Colors.indigo[100],
-                            child: const Icon(Icons.category, size: 30, color: Colors.indigo),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            ['Sarees', 'Shirts', 'Dress Materials', 'Kids Wear', 'Blouses', 'Linen'][index],
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ],
-                      ),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          color: Colors.indigo[50],
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: List.generate(
+                6,
+                    (index) => GestureDetector(
+                  onTap: () {
+                    // Navigate to respective pages
+                    switch (index) {
+                      case 0:
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const SareesPage()));
+                        break;
+                      case 1:
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => SareesPage()));
+                        break;
+                      case 2:
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => SareesPage()));
+                        break;
+                      case 3:
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => SareesPage()));
+                        break;
+                      case 4:
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => SareesPage()));
+                        break;
+                      case 5:
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => SareesPage()));
+                        break;
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 40,
+                          backgroundImage: AssetImage([
+                            'assets/download.jpeg',
+                            'assets/download.jpeg',
+                            'assets/download.jpeg',
+                            'assets/download.jpeg',
+                            'assets/download.jpeg',
+                            'assets/download.jpeg'
+                          ][index]),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          [
+                            'Sarees',
+                            'Shirts',
+                            'Dress Materials',
+                            'Kids Wear',
+                            'Blouses',
+                            'Linen'
+                          ][index],
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
             ),
+          ),
+        ),
+
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 15),
               child: CarouselSlider(
@@ -227,7 +267,7 @@ class _HomePageState extends State<HomePage> {
                   );
                 }).toList(),
                 options: CarouselOptions(
-                  height: 200,
+                  height: 100,
                   autoPlay: true,
                   enlargeCenterPage: true,
                 ),
