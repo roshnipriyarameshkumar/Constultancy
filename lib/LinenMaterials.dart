@@ -1,105 +1,95 @@
 import 'package:flutter/material.dart';
 
-class SareesPage extends StatelessWidget {
-  const SareesPage({super.key});
+class LinenWearPage extends StatelessWidget {
+  const LinenWearPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> sarees = [
+    List<Map<String, dynamic>> linenWear = [
       {
-        'name': 'Banarasi Silk Saree',
+        'name': 'Elegant White Linen Dress',
         'image': 'assets/image1.jpg',
-        'price': 4500,
-        'description':
-        'A luxurious Banarasi silk saree with golden zari work. Perfect for weddings and festive occasions.',
-        'fabric': 'Pure Silk',
-        'origin': 'Varanasi, India'
+        'price': 2500,
+        'description': 'A breathable and soft linen dress, perfect for special occasions.',
+        'fabric': 'Pure Linen',
+        'origin': 'India'
       },
       {
-        'name': 'Kanjivaram Saree',
+        'name': 'Casual Linen Checked Shirt & Shorts',
         'image': 'assets/image3.jpeg',
-        'price': 5000,
-        'description':
-        'A handwoven Kanjivaram saree with intricate temple border designs.',
-        'fabric': 'Silk',
-        'origin': 'Tamil Nadu, India'
-      },
-      {
-        'name': 'Chiffon Saree',
-        'image': 'assets/image2.webp',
-        'price': 1800,
-        'description':
-        'A lightweight chiffon saree with floral prints, perfect for summer outings.',
-        'fabric': 'Chiffon',
-        'origin': 'Surat, India'
-      },
-      {
-        'name': 'Cotton Handloom Saree',
-        'image': 'assets/image4.avif',
-        'price': 2200,
-        'description':
-        'A breathable cotton handloom saree, best for casual and office wear.',
-        'fabric': 'Cotton',
-        'origin': 'West Bengal, India'
-      },
-      {
-        'name': 'Georgette Party Saree',
-        'image': 'assets/image5.avif',
-        'price': 3000,
-        'description':
-        'A stunning georgette saree with sequins and embroidery, ideal for parties.',
-        'fabric': 'Georgette',
-        'origin': 'Mumbai, India'
-      },
-      {
-        'name': 'Patola Saree',
-        'image': 'assets/image6.avif',
-        'price': 5500,
-        'description':
-        'A rich and vibrant Patola saree with double ikat weaving technique.',
-        'fabric': 'Silk',
-        'origin': 'Gujarat, India'
-      },
-      {
-        'name': 'Tussar Silk Saree',
-        'image': 'assets/download.jpeg',
-        'price': 4000,
-        'description':
-        'A natural and eco-friendly Tussar silk saree with earthy tones.',
-        'fabric': 'Tussar Silk',
-        'origin': 'Bihar, India'
-      },
-      {
-        'name': 'Linen Saree',
-        'image': 'assets/images1.jpeg',
-        'price': 2700,
-        'description':
-        'A simple yet elegant linen saree with minimalistic prints.',
-        'fabric': 'Linen',
-        'origin': 'Kolkata, India'
-      },
-      {
-        'name': 'Bandhani Saree',
-        'image': 'assets/image1.jpg',
         'price': 2800,
-        'description':
-        'A traditional Bandhani saree with tie-dye patterns in vibrant colors.',
-        'fabric': 'Cotton & Silk Blend',
-        'origin': 'Rajasthan, India'
+        'description': 'A lightweight linen checked shirt with matching shorts for a relaxed look.',
+        'fabric': 'Linen Blend',
+        'origin': 'India'
       },
       {
-        'name': 'Bhagalpuri Silk Saree',
-        'image': 'assets/image3.jpeg',
+        'name': 'Linen Denim Style Outfit',
+        'image': 'assets/image2.webp',
+        'price': 3000,
+        'description': 'A modern take on denim, crafted from soft linen for ultimate comfort.',
+        'fabric': 'Linen Blend',
+        'origin': 'India'
+      },
+      {
+        'name': 'Breathable Summer Linen Frock',
+        'image': 'assets/image4.avif',
         'price': 3200,
-        'description':
-        'A lightweight Bhagalpuri silk saree with a unique glossy texture.',
-        'fabric': 'Silk',
-        'origin': 'Bhagalpur, India'
+        'description': 'A cool and airy linen frock designed to keep kids fresh in the heat.',
+        'fabric': 'Pure Linen',
+        'origin': 'India'
+      },
+      {
+        'name': 'Striped Linen T-Shirt & Joggers Set',
+        'image': 'assets/image5.avif',
+        'price': 2600,
+        'description': 'A soft linen striped t-shirt with joggers for effortless comfort.',
+        'fabric': 'Linen Blend',
+        'origin': 'India'
+      },
+      {
+        'name': 'Floral Printed Linen Dress',
+        'image': 'assets/image6.avif',
+        'price': 2750,
+        'description': 'A charming floral print linen dress for playful elegance.',
+        'fabric': 'Linen Blend',
+        'origin': 'India'
+      },
+      {
+        'name': 'Everyday Comfortable Linen Outfit',
+        'image': 'assets/download.jpeg',
+        'price': 2300,
+        'description': 'A soft and durable linen outfit for all-day ease.',
+        'fabric': 'Pure Linen',
+        'origin': 'India'
+      },
+      {
+        'name': 'Mandarin Collar Linen Shirt & Pants',
+        'image': 'assets/images1.jpeg',
+        'price': 2900,
+        'description': 'A classic mandarin collar linen shirt with matching pants for a refined style.',
+        'fabric': 'Linen Cotton Blend',
+        'origin': 'India'
+      },
+      {
+        'name': 'Linen Half Sleeve Beachwear Set',
+        'image': 'assets/image1.jpg',
+        'price': 2700,
+        'description': 'A breathable and lightweight linen beachwear set, ideal for summer trips.',
+        'fabric': 'Linen Blend',
+        'origin': 'India'
+      },
+      {
+        'name': 'Classic Oxford Linen Shirt & Shorts',
+        'image': 'assets/image3.jpeg',
+        'price': 3100,
+        'description': 'A premium linen Oxford shirt with shorts for an elegant touch.',
+        'fabric': 'Oxford Linen',
+        'origin': 'India'
       },
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Sarees Collection")),
+      appBar: AppBar(title: const Text("Linen Wear Collection")),
       body: GridView.builder(
         padding: const EdgeInsets.all(10),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -108,14 +98,14 @@ class SareesPage extends StatelessWidget {
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
         ),
-        itemCount: sarees.length,
+        itemCount: linenWear.length,
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SareeDetailPage(saree: sarees[index]),
+                  builder: (context) => LinenWearDetailPage(linenWear: linenWear[index]),
                 ),
               );
             },
@@ -126,7 +116,7 @@ class SareesPage extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Image.asset(
-                      sarees[index]['image'],
+                      linenWear[index]['image'],
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -136,11 +126,11 @@ class SareesPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          sarees[index]['name'],
+                          linenWear[index]['name'],
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        Text("₹${sarees[index]['price']}",
+                        Text("₹${linenWear[index]['price']}",
                             style: const TextStyle(
                                 fontSize: 14, color: Colors.green)),
                         Row(
@@ -169,14 +159,14 @@ class SareesPage extends StatelessWidget {
   }
 }
 
-class SareeDetailPage extends StatelessWidget {
-  final Map<String, dynamic> saree;
-  const SareeDetailPage({super.key, required this.saree});
+class LinenWearDetailPage extends StatelessWidget {
+  final Map<String, dynamic> linenWear;
+  const LinenWearDetailPage({super.key, required this.linenWear});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(saree['name'])),
+      appBar: AppBar(title: Text(linenWear['name'])),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -184,48 +174,32 @@ class SareeDetailPage extends StatelessWidget {
           children: [
             Center(
               child: Image.asset(
-                saree['image'],
+                linenWear['image'],
                 height: 250,
                 fit: BoxFit.cover,
               ),
             ),
             const SizedBox(height: 10),
             Text(
-              saree['name'],
+              linenWear['name'],
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             Text(
-              "₹${saree['price']}",
+              "₹${linenWear['price']}",
               style: const TextStyle(fontSize: 18, color: Colors.green),
             ),
             const SizedBox(height: 10),
             Text(
-              saree['description'],
+              linenWear['description'],
               style: const TextStyle(fontSize: 16),
             ),
             Text(
-              "Fabric: ${saree['fabric']}",
+              "Fabric: ${linenWear['fabric']}",
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Text(
-              "Origin: ${saree['origin']}",
+              "Origin: ${linenWear['origin']}",
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.favorite_border),
-                  label: const Text("Add to Wishlist"),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.add_shopping_cart),
-                  label: const Text("Add to Cart"),
-                ),
-              ],
             ),
           ],
         ),

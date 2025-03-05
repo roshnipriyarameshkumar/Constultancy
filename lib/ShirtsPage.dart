@@ -1,105 +1,103 @@
 import 'package:flutter/material.dart';
 
-class SareesPage extends StatelessWidget {
-  const SareesPage({super.key});
+class ShirtsPage extends StatelessWidget {
+  const ShirtsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> sarees = [
+    List<Map<String, dynamic>> shirts = [
       {
-        'name': 'Banarasi Silk Saree',
+        'name': 'Formal White Shirt',
         'image': 'assets/image1.jpg',
-        'price': 4500,
+        'price': 1500,
         'description':
-        'A luxurious Banarasi silk saree with golden zari work. Perfect for weddings and festive occasions.',
-        'fabric': 'Pure Silk',
-        'origin': 'Varanasi, India'
+        'A classic formal white shirt with a crisp collar, perfect for office wear.',
+        'fabric': 'Cotton Blend',
+        'origin': 'India'
       },
       {
-        'name': 'Kanjivaram Saree',
+        'name': 'Checked Casual Shirt',
         'image': 'assets/image3.jpeg',
-        'price': 5000,
-        'description':
-        'A handwoven Kanjivaram saree with intricate temple border designs.',
-        'fabric': 'Silk',
-        'origin': 'Tamil Nadu, India'
-      },
-      {
-        'name': 'Chiffon Saree',
-        'image': 'assets/image2.webp',
         'price': 1800,
         'description':
-        'A lightweight chiffon saree with floral prints, perfect for summer outings.',
-        'fabric': 'Chiffon',
-        'origin': 'Surat, India'
+        'A stylish checked shirt, great for casual outings and weekend getaways.',
+        'fabric': 'Cotton',
+        'origin': 'India'
       },
       {
-        'name': 'Cotton Handloom Saree',
+        'name': 'Denim Shirt',
+        'image': 'assets/image2.webp',
+        'price': 2000,
+        'description':
+        'A rugged denim shirt with a classic button-down style.',
+        'fabric': 'Denim',
+        'origin': 'India'
+      },
+      {
+        'name': 'Linen Summer Shirt',
         'image': 'assets/image4.avif',
         'price': 2200,
         'description':
-        'A breathable cotton handloom saree, best for casual and office wear.',
-        'fabric': 'Cotton',
-        'origin': 'West Bengal, India'
-      },
-      {
-        'name': 'Georgette Party Saree',
-        'image': 'assets/image5.avif',
-        'price': 3000,
-        'description':
-        'A stunning georgette saree with sequins and embroidery, ideal for parties.',
-        'fabric': 'Georgette',
-        'origin': 'Mumbai, India'
-      },
-      {
-        'name': 'Patola Saree',
-        'image': 'assets/image6.avif',
-        'price': 5500,
-        'description':
-        'A rich and vibrant Patola saree with double ikat weaving technique.',
-        'fabric': 'Silk',
-        'origin': 'Gujarat, India'
-      },
-      {
-        'name': 'Tussar Silk Saree',
-        'image': 'assets/download.jpeg',
-        'price': 4000,
-        'description':
-        'A natural and eco-friendly Tussar silk saree with earthy tones.',
-        'fabric': 'Tussar Silk',
-        'origin': 'Bihar, India'
-      },
-      {
-        'name': 'Linen Saree',
-        'image': 'assets/images1.jpeg',
-        'price': 2700,
-        'description':
-        'A simple yet elegant linen saree with minimalistic prints.',
+        'A breathable linen shirt, ideal for hot summer days.',
         'fabric': 'Linen',
-        'origin': 'Kolkata, India'
+        'origin': 'India'
       },
       {
-        'name': 'Bandhani Saree',
+        'name': 'Striped Office Shirt',
+        'image': 'assets/image5.avif',
+        'price': 1600,
+        'description':
+        'A professional striped shirt, perfect for meetings and business events.',
+        'fabric': 'Cotton',
+        'origin': 'India'
+      },
+      {
+        'name': 'Floral Printed Shirt',
+        'image': 'assets/image6.avif',
+        'price': 1750,
+        'description':
+        'A trendy floral printed shirt, great for vacations and parties.',
+        'fabric': 'Rayon',
+        'origin': 'India'
+      },
+      {
+        'name': 'Casual Polo Shirt',
+        'image': 'assets/download.jpeg',
+        'price': 1300,
+        'description': 'A comfortable polo shirt for everyday casual wear.',
+        'fabric': 'Cotton',
+        'origin': 'India'
+      },
+      {
+        'name': 'Mandarin Collar Shirt',
+        'image': 'assets/images1.jpeg',
+        'price': 1900,
+        'description':
+        'A modern mandarin collar shirt, adding a touch of sophistication.',
+        'fabric': 'Cotton Linen Blend',
+        'origin': 'India'
+      },
+      {
+        'name': 'Half Sleeve Beach Shirt',
         'image': 'assets/image1.jpg',
-        'price': 2800,
+        'price': 1700,
         'description':
-        'A traditional Bandhani saree with tie-dye patterns in vibrant colors.',
-        'fabric': 'Cotton & Silk Blend',
-        'origin': 'Rajasthan, India'
+        'A lightweight half sleeve shirt, perfect for beach vacations.',
+        'fabric': 'Polyester Blend',
+        'origin': 'India'
       },
       {
-        'name': 'Bhagalpuri Silk Saree',
+        'name': 'Oxford Classic Shirt',
         'image': 'assets/image3.jpeg',
-        'price': 3200,
-        'description':
-        'A lightweight Bhagalpuri silk saree with a unique glossy texture.',
-        'fabric': 'Silk',
-        'origin': 'Bhagalpur, India'
+        'price': 2100,
+        'description': 'A timeless Oxford shirt with a refined fit and look.',
+        'fabric': 'Oxford Cotton',
+        'origin': 'India'
       },
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Sarees Collection")),
+      appBar: AppBar(title: const Text("Shirts Collection")),
       body: GridView.builder(
         padding: const EdgeInsets.all(10),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -108,14 +106,14 @@ class SareesPage extends StatelessWidget {
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
         ),
-        itemCount: sarees.length,
+        itemCount: shirts.length,
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SareeDetailPage(saree: sarees[index]),
+                  builder: (context) => ShirtDetailPage(shirt: shirts[index]),
                 ),
               );
             },
@@ -126,7 +124,7 @@ class SareesPage extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Image.asset(
-                      sarees[index]['image'],
+                      shirts[index]['image'],
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -136,11 +134,11 @@ class SareesPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          sarees[index]['name'],
+                          shirts[index]['name'],
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        Text("₹${sarees[index]['price']}",
+                        Text("₹${shirts[index]['price']}",
                             style: const TextStyle(
                                 fontSize: 14, color: Colors.green)),
                         Row(
@@ -169,14 +167,14 @@ class SareesPage extends StatelessWidget {
   }
 }
 
-class SareeDetailPage extends StatelessWidget {
-  final Map<String, dynamic> saree;
-  const SareeDetailPage({super.key, required this.saree});
+class ShirtDetailPage extends StatelessWidget {
+  final Map<String, dynamic> shirt;
+  const ShirtDetailPage({super.key, required this.shirt});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(saree['name'])),
+      appBar: AppBar(title: Text(shirt['name'])),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -184,48 +182,32 @@ class SareeDetailPage extends StatelessWidget {
           children: [
             Center(
               child: Image.asset(
-                saree['image'],
+                shirt['image'],
                 height: 250,
                 fit: BoxFit.cover,
               ),
             ),
             const SizedBox(height: 10),
             Text(
-              saree['name'],
+              shirt['name'],
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             Text(
-              "₹${saree['price']}",
+              "₹${shirt['price']}",
               style: const TextStyle(fontSize: 18, color: Colors.green),
             ),
             const SizedBox(height: 10),
             Text(
-              saree['description'],
+              shirt['description'],
               style: const TextStyle(fontSize: 16),
             ),
             Text(
-              "Fabric: ${saree['fabric']}",
+              "Fabric: ${shirt['fabric']}",
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Text(
-              "Origin: ${saree['origin']}",
+              "Origin: ${shirt['origin']}",
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.favorite_border),
-                  label: const Text("Add to Wishlist"),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.add_shopping_cart),
-                  label: const Text("Add to Cart"),
-                ),
-              ],
             ),
           ],
         ),

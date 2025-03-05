@@ -4,7 +4,14 @@ import 'signup.dart'; // Import the signup page
 import 'addtocart.dart';
 import 'profile.dart';
 import 'SareesPage.dart';
-
+import 'ShirtsPage.dart';
+import 'DressMaterialsPage.dart';
+import 'KidswearPage.dart';
+import 'BlousePage.dart';
+import 'LinenMaterials.dart';
+import 'ExplorePage.dart';
+import 'NotificationPage.dart';
+import 'WishlistPage.dart';
 
 class TextileStoreApp extends StatelessWidget {
   const TextileStoreApp({super.key});
@@ -81,7 +88,10 @@ class _HomePageState extends State<HomePage> {
           ),
           IconButton(
             onPressed: () {
-              // Show notifications
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NotificationsPage()),
+              );
             },
             icon: const Icon(Icons.notifications, color: Colors.black),
           ),
@@ -93,8 +103,7 @@ class _HomePageState extends State<HomePage> {
               );
             },
             icon: const Icon(Icons.login, color: Colors.black),
-          ),
-        ],
+          ),      ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -191,19 +200,19 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => const SareesPage()));
                         break;
                       case 1:
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SareesPage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ShirtsPage()));
                         break;
                       case 2:
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SareesPage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => DressMaterialsPage()));
                         break;
                       case 3:
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SareesPage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => KidsWearPage()));
                         break;
                       case 4:
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SareesPage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => BlousesPage()));
                         break;
                       case 5:
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SareesPage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => LinenWearPage()));
                         break;
                     }
                   },
@@ -463,7 +472,22 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: Colors.indigo,
         unselectedItemColor: Colors.grey,
         onTap: (index) {
-          if (index == 3) {
+          if (index == 0) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+            );
+          } else if (index == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ExplorePage()),
+            );
+          } else if (index == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const WishlistPage()),
+            );
+          } else if (index == 3) {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ProfilePage()),
@@ -471,6 +495,7 @@ class _HomePageState extends State<HomePage> {
           }
         },
       ),
+
     );
   }
 }

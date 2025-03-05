@@ -1,105 +1,103 @@
 import 'package:flutter/material.dart';
 
-class SareesPage extends StatelessWidget {
-  const SareesPage({super.key});
+class DressMaterialsPage extends StatelessWidget {
+  const DressMaterialsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> sarees = [
+    List<Map<String, dynamic>> dressMaterials = [
       {
-        'name': 'Banarasi Silk Saree',
+        'name': 'Elegant White Dress Material',
         'image': 'assets/image1.jpg',
-        'price': 4500,
+        'price': 2500,
         'description':
-        'A luxurious Banarasi silk saree with golden zari work. Perfect for weddings and festive occasions.',
-        'fabric': 'Pure Silk',
-        'origin': 'Varanasi, India'
+        'A sophisticated white dress material with intricate embroidery, perfect for special occasions.',
+        'fabric': 'Chiffon Blend',
+        'origin': 'India'
       },
       {
-        'name': 'Kanjivaram Saree',
+        'name': 'Casual Checked Dress Material',
         'image': 'assets/image3.jpeg',
-        'price': 5000,
-        'description':
-        'A handwoven Kanjivaram saree with intricate temple border designs.',
-        'fabric': 'Silk',
-        'origin': 'Tamil Nadu, India'
-      },
-      {
-        'name': 'Chiffon Saree',
-        'image': 'assets/image2.webp',
-        'price': 1800,
-        'description':
-        'A lightweight chiffon saree with floral prints, perfect for summer outings.',
-        'fabric': 'Chiffon',
-        'origin': 'Surat, India'
-      },
-      {
-        'name': 'Cotton Handloom Saree',
-        'image': 'assets/image4.avif',
-        'price': 2200,
-        'description':
-        'A breathable cotton handloom saree, best for casual and office wear.',
-        'fabric': 'Cotton',
-        'origin': 'West Bengal, India'
-      },
-      {
-        'name': 'Georgette Party Saree',
-        'image': 'assets/image5.avif',
-        'price': 3000,
-        'description':
-        'A stunning georgette saree with sequins and embroidery, ideal for parties.',
-        'fabric': 'Georgette',
-        'origin': 'Mumbai, India'
-      },
-      {
-        'name': 'Patola Saree',
-        'image': 'assets/image6.avif',
-        'price': 5500,
-        'description':
-        'A rich and vibrant Patola saree with double ikat weaving technique.',
-        'fabric': 'Silk',
-        'origin': 'Gujarat, India'
-      },
-      {
-        'name': 'Tussar Silk Saree',
-        'image': 'assets/download.jpeg',
-        'price': 4000,
-        'description':
-        'A natural and eco-friendly Tussar silk saree with earthy tones.',
-        'fabric': 'Tussar Silk',
-        'origin': 'Bihar, India'
-      },
-      {
-        'name': 'Linen Saree',
-        'image': 'assets/images1.jpeg',
-        'price': 2700,
-        'description':
-        'A simple yet elegant linen saree with minimalistic prints.',
-        'fabric': 'Linen',
-        'origin': 'Kolkata, India'
-      },
-      {
-        'name': 'Bandhani Saree',
-        'image': 'assets/image1.jpg',
         'price': 2800,
         'description':
-        'A traditional Bandhani saree with tie-dye patterns in vibrant colors.',
-        'fabric': 'Cotton & Silk Blend',
-        'origin': 'Rajasthan, India'
+        'A stylish checked dress material, ideal for casual and semi-formal wear.',
+        'fabric': 'Cotton',
+        'origin': 'India'
       },
       {
-        'name': 'Bhagalpuri Silk Saree',
-        'image': 'assets/image3.jpeg',
+        'name': 'Denim Look Dress Material',
+        'image': 'assets/image2.webp',
+        'price': 3000,
+        'description':
+        'A trendy denim-inspired dress material with a modern touch.',
+        'fabric': 'Denim Blend',
+        'origin': 'India'
+      },
+      {
+        'name': 'Linen Summer Dress Material',
+        'image': 'assets/image4.avif',
         'price': 3200,
         'description':
-        'A lightweight Bhagalpuri silk saree with a unique glossy texture.',
-        'fabric': 'Silk',
-        'origin': 'Bhagalpur, India'
+        'A lightweight linen dress material, perfect for warm weather.',
+        'fabric': 'Linen',
+        'origin': 'India'
+      },
+      {
+        'name': 'Striped Designer Dress Material',
+        'image': 'assets/image5.avif',
+        'price': 2600,
+        'description':
+        'A modern striped dress material, suited for office and casual outings.',
+        'fabric': 'Cotton',
+        'origin': 'India'
+      },
+      {
+        'name': 'Floral Printed Dress Material',
+        'image': 'assets/image6.avif',
+        'price': 2750,
+        'description':
+        'A beautiful floral print dress material, great for festive wear.',
+        'fabric': 'Rayon',
+        'origin': 'India'
+      },
+      {
+        'name': 'Casual Everyday Dress Material',
+        'image': 'assets/download.jpeg',
+        'price': 2300,
+        'description': 'A comfortable everyday dress material, soft and breathable.',
+        'fabric': 'Cotton',
+        'origin': 'India'
+      },
+      {
+        'name': 'Mandarin Collar Dress Material',
+        'image': 'assets/images1.jpeg',
+        'price': 2900,
+        'description':
+        'A chic mandarin collar dress material, adding an elegant appeal.',
+        'fabric': 'Cotton Linen Blend',
+        'origin': 'India'
+      },
+      {
+        'name': 'Half Sleeve Beach Dress Material',
+        'image': 'assets/image1.jpg',
+        'price': 2700,
+        'description':
+        'A lightweight and breezy dress material, ideal for vacations.',
+        'fabric': 'Polyester Blend',
+        'origin': 'India'
+      },
+      {
+        'name': 'Classic Oxford Dress Material',
+        'image': 'assets/image3.jpeg',
+        'price': 3100,
+        'description': 'A timeless Oxford style dress material with a sophisticated look.',
+        'fabric': 'Oxford Cotton',
+        'origin': 'India'
       },
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Sarees Collection")),
+      appBar: AppBar(title: const Text("Dress Materials Collection")),
       body: GridView.builder(
         padding: const EdgeInsets.all(10),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -108,14 +106,14 @@ class SareesPage extends StatelessWidget {
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
         ),
-        itemCount: sarees.length,
+        itemCount: dressMaterials.length,
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SareeDetailPage(saree: sarees[index]),
+                  builder: (context) => DressMaterialDetailPage(dressMaterial: dressMaterials[index]),
                 ),
               );
             },
@@ -126,7 +124,7 @@ class SareesPage extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Image.asset(
-                      sarees[index]['image'],
+                      dressMaterials[index]['image'],
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -136,11 +134,11 @@ class SareesPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          sarees[index]['name'],
+                          dressMaterials[index]['name'],
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        Text("₹${sarees[index]['price']}",
+                        Text("₹${dressMaterials[index]['price']}",
                             style: const TextStyle(
                                 fontSize: 14, color: Colors.green)),
                         Row(
@@ -169,14 +167,14 @@ class SareesPage extends StatelessWidget {
   }
 }
 
-class SareeDetailPage extends StatelessWidget {
-  final Map<String, dynamic> saree;
-  const SareeDetailPage({super.key, required this.saree});
+class DressMaterialDetailPage extends StatelessWidget {
+  final Map<String, dynamic> dressMaterial;
+  const DressMaterialDetailPage({super.key, required this.dressMaterial});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(saree['name'])),
+      appBar: AppBar(title: Text(dressMaterial['name'])),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -184,48 +182,32 @@ class SareeDetailPage extends StatelessWidget {
           children: [
             Center(
               child: Image.asset(
-                saree['image'],
+                dressMaterial['image'],
                 height: 250,
                 fit: BoxFit.cover,
               ),
             ),
             const SizedBox(height: 10),
             Text(
-              saree['name'],
+              dressMaterial['name'],
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             Text(
-              "₹${saree['price']}",
+              "₹${dressMaterial['price']}",
               style: const TextStyle(fontSize: 18, color: Colors.green),
             ),
             const SizedBox(height: 10),
             Text(
-              saree['description'],
+              dressMaterial['description'],
               style: const TextStyle(fontSize: 16),
             ),
             Text(
-              "Fabric: ${saree['fabric']}",
+              "Fabric: ${dressMaterial['fabric']}",
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Text(
-              "Origin: ${saree['origin']}",
+              "Origin: ${dressMaterial['origin']}",
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.favorite_border),
-                  label: const Text("Add to Wishlist"),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.add_shopping_cart),
-                  label: const Text("Add to Cart"),
-                ),
-              ],
             ),
           ],
         ),
