@@ -4,50 +4,80 @@ import 'home.dart';   // Import the Home Page
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-
 class SignupPage extends StatelessWidget {
   const SignupPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _fullNameController = TextEditingController();
+    final _phoneNumberController = TextEditingController();
+    final _addressController = TextEditingController();
     final _signupEmailController = TextEditingController();
     final _signupPasswordController = TextEditingController();
     final _confirmPasswordController = TextEditingController();
 
     void _signup() async {
+      String fullName = _fullNameController.text;
+      String phoneNumber = _phoneNumberController.text;
+      String address = _addressController.text;
       String email = _signupEmailController.text;
       String password = _signupPasswordController.text;
       String confirmPassword = _confirmPasswordController.text;
 
-      if (email.isNotEmpty && password == confirmPassword) {
-        // Save user details to Firestore
-        try {
-          await FirebaseFirestore.instance.collection('users').doc(email).set({
-            'email': email,
-            'password': password, // Consider hashing passwords in real apps
-            'createdAt': Timestamp.now(),
-          });
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Account Created Successfully!")),
-          );
-
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomePage()),
-          );
-        } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Error: $e")),
-          );
-        }
-      } else {
+      if (fullName.isEmpty || phoneNumber.isEmpty || address.isEmpty || email.isEmpty || password.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("All fields are required!")),
+        );
+        return;
+      }
+      if (password != confirmPassword) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Passwords do not match!")),
         );
+        return;
+      }
+
+      try {
+        var querySnapshot = await FirebaseFirestore.instance.collection('users').where('email', isEqualTo: email).get();
+        for (var doc in querySnapshot.docs) {
+          if (doc['password'] == password) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("This email and password combination already exists!")),
+            );
+            return;
+          }
+        }
+
+        if (querySnapshot.docs.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Email already exists! Please use a different email.")),
+          );
+          return;
+        }
+
+        await FirebaseFirestore.instance.collection('users').add({
+          'fullName': fullName,
+          'phoneNumber': phoneNumber,
+          'address': address,
+          'email': email,
+          'password': password, // Consider hashing passwords in real apps
+          'createdAt': Timestamp.now(),
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Account Created Successfully!")),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: $e")),
+        );
       }
     }
-
 
     return Scaffold(
       appBar: AppBar(
@@ -77,6 +107,40 @@ class SignupPage extends StatelessWidget {
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
               const SizedBox(height: 30),
+              TextField(
+                controller: _fullNameController,
+                decoration: InputDecoration(
+                  labelText: 'Full Name',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  prefixIcon: const Icon(Icons.person),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _phoneNumberController,
+                decoration: InputDecoration(
+                  labelText: 'Phone Number',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  prefixIcon: const Icon(Icons.phone),
+                ),
+                keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _addressController,
+                decoration: InputDecoration(
+                  labelText: 'Address',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  prefixIcon: const Icon(Icons.home),
+                ),
+              ),
+              const SizedBox(height: 20),
               TextField(
                 controller: _signupEmailController,
                 decoration: InputDecoration(
@@ -135,7 +199,6 @@ class SignupPage extends StatelessWidget {
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
-                  // Navigate to LoginPage when login is clicked
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const LoginPage()),
