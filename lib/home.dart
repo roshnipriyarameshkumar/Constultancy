@@ -11,6 +11,8 @@ import 'BlousePage.dart';
 import 'LinenMaterials.dart';
 import 'ExplorePage.dart';
 import 'NotificationPage.dart';
+import 'WishlistPage.dart';
+
 class TextileStoreApp extends StatelessWidget {
   const TextileStoreApp({super.key});
 
@@ -483,7 +485,7 @@ class _HomePageState extends State<HomePage> {
           } else if (index == 2) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const HomePage()),
+              MaterialPageRoute(builder: (context) => const WishlistPage()),
             );
           } else if (index == 3) {
             Navigator.push(

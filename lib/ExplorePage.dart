@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'home.dart';
 class ExplorePage extends StatelessWidget {
   const ExplorePage({super.key});
 
@@ -88,7 +88,10 @@ class ExplorePage extends StatelessWidget {
                             alignment: Alignment.centerRight,
                             child: TextButton(
                               onPressed: () {
-                                // Handle navigation or action
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const HomePage()),
+                                );
                               },
                               child: const Text(
                                 "Discover More",
@@ -109,3 +112,4 @@ class ExplorePage extends StatelessWidget {
     );
   }
 }
+
