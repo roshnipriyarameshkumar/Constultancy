@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'admin.dart';
 import 'home.dart';
 import 'signup.dart';
 import 'otpverification.dart';
@@ -49,6 +50,16 @@ class _LoginPageState extends State<LoginPage> {
         return;
       }
 
+      // Check if the user is an admin
+      if (email == "admin@gmail.com" && password == "admin1") {
+        _showSnackBar("Admin Login Successful!");
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const AdminPage()),
+        );
+        return;
+      }
+
       var userQuery = await _firestore
           .collection('users')
           .where('email', isEqualTo: email)
@@ -89,6 +100,7 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
   }
+
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(

@@ -358,7 +358,7 @@ class _HomePageState extends State<HomePage> {
                                         backgroundColor: Colors.indigo,
                                         minimumSize: const Size(70, 30),
                                       ),
-                                      child: const Text('Add to Cart'),
+                                      child: const Text('Add'),
                                     ),
                                     IconButton(
                                       onPressed: () => addToWishlist('Best Seller ${index + 1}'),
@@ -428,14 +428,17 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 const SizedBox(height: 5),
                                 Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Adjust spacing
                                   children: [
-                                    ElevatedButton(
-                                      onPressed: () => addToCart('Highly Rated ${index + 1}'),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.indigo,
-                                        minimumSize: const Size(70, 30),
+                                    Expanded(
+                                      child: ElevatedButton(
+                                        onPressed: () => addToCart('Highly Rated ${index + 1}'),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.indigo,
+                                          minimumSize: const Size(70, 30),
+                                        ),
+                                        child: const Text('Add to Cart'),
                                       ),
-                                      child: const Text('Add to Cart'),
                                     ),
                                     IconButton(
                                       onPressed: () => addToWishlist('Highly Rated ${index + 1}'),
