@@ -11,7 +11,7 @@ class _AddToCartPageState extends State<AddToCartPage> {
   // List to store cart items
   List<Map<String, dynamic>> cartItems = [
     {"name": "Product 1", "price": 500, "image": 'assets/images1.jpeg'},
-    {"name": "Product 2", "price": 1000, "image": 'assets/product2.jpg'},
+    {"name": "Product 2", "price": 1000, "image": 'assets/image1.jpg'},
     // Add more products dynamically if needed
   ];
 

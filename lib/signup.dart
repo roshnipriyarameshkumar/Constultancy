@@ -1,84 +1,107 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'login.dart';  // Import the Login Page
-import 'home.dart';   // Import the Home Page
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'login.dart';
 
-class SignupPage extends StatelessWidget {
+class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final _fullNameController = TextEditingController();
-    final _phoneNumberController = TextEditingController();
-    final _addressController = TextEditingController();
-    final _signupEmailController = TextEditingController();
-    final _signupPasswordController = TextEditingController();
-    final _confirmPasswordController = TextEditingController();
+  State<SignupPage> createState() => _SignupPageState();
+}
 
-    void _signup() async {
-      String fullName = _fullNameController.text;
-      String phoneNumber = _phoneNumberController.text;
-      String address = _addressController.text;
-      String email = _signupEmailController.text;
-      String password = _signupPasswordController.text;
-      String confirmPassword = _confirmPasswordController.text;
+class _SignupPageState extends State<SignupPage> {
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _signupEmailController = TextEditingController();
+  final TextEditingController _signupPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
-      if (fullName.isEmpty || phoneNumber.isEmpty || address.isEmpty || email.isEmpty || password.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("All fields are required!")),
-        );
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _fullNameController.dispose();
+    _phoneNumberController.dispose();
+    _addressController.dispose();
+    _signupEmailController.dispose();
+    _signupPasswordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  void _signup() async {
+    setState(() => _isLoading = true);
+
+    String fullName = _fullNameController.text.trim();
+    String phoneNumber = _phoneNumberController.text.trim();
+    String address = _addressController.text.trim();
+    String email = _signupEmailController.text.trim();
+    String password = _signupPasswordController.text.trim();
+    String confirmPassword = _confirmPasswordController.text.trim();
+
+    if (fullName.isEmpty || phoneNumber.isEmpty || address.isEmpty || email.isEmpty || password.isEmpty) {
+      _showSnackBar("All fields are required!");
+      setState(() => _isLoading = false);
+      return;
+    }
+
+    if (password != confirmPassword) {
+      _showSnackBar("Passwords do not match!");
+      setState(() => _isLoading = false);
+      return;
+    }
+
+    try {
+      // Check if email exists
+      var methods = await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+      if (methods.isNotEmpty) {
+        _showSnackBar("Email already exists! Please use a different email.");
+        setState(() => _isLoading = false);
         return;
       }
-      if (password != confirmPassword) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Passwords do not match!")),
-        );
-        return;
-      }
 
-      try {
-        var querySnapshot = await FirebaseFirestore.instance.collection('users').where('email', isEqualTo: email).get();
-        for (var doc in querySnapshot.docs) {
-          if (doc['password'] == password) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("This email and password combination already exists!")),
-            );
-            return;
-          }
-        }
+      // Create user
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-        if (querySnapshot.docs.isNotEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Email already exists! Please use a different email.")),
-          );
-          return;
-        }
-
-        await FirebaseFirestore.instance.collection('users').add({
+      User? user = userCredential.user;
+      if (user != null) {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
           'fullName': fullName,
           'phoneNumber': phoneNumber,
           'address': address,
           'email': email,
-          'password': password, // Consider hashing passwords in real apps
           'createdAt': Timestamp.now(),
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Account Created Successfully!")),
-        );
+        await user.sendEmailVerification();
+
+        _showSnackBar("Account Created Successfully! Please verify your email.");
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error: $e")),
+          MaterialPageRoute(builder: (context) => const LoginPage()),
         );
       }
+    } catch (e) {
+      _showSnackBar("Error: ${e.toString()}");
+    } finally {
+      setState(() => _isLoading = false);
     }
+  }
 
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Amsam Tex'),
@@ -107,77 +130,21 @@ class SignupPage extends StatelessWidget {
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
               const SizedBox(height: 30),
-              TextField(
-                controller: _fullNameController,
-                decoration: InputDecoration(
-                  labelText: 'Full Name',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  prefixIcon: const Icon(Icons.person),
-                ),
-              ),
+              _buildTextField(_fullNameController, 'Full Name', Icons.person),
               const SizedBox(height: 20),
-              TextField(
-                controller: _phoneNumberController,
-                decoration: InputDecoration(
-                  labelText: 'Phone Number',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  prefixIcon: const Icon(Icons.phone),
-                ),
-                keyboardType: TextInputType.phone,
-              ),
+              _buildTextField(_phoneNumberController, 'Phone Number', Icons.phone, keyboardType: TextInputType.phone),
               const SizedBox(height: 20),
-              TextField(
-                controller: _addressController,
-                decoration: InputDecoration(
-                  labelText: 'Address',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  prefixIcon: const Icon(Icons.home),
-                ),
-              ),
+              _buildTextField(_addressController, 'Address', Icons.home),
               const SizedBox(height: 20),
-              TextField(
-                controller: _signupEmailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  prefixIcon: const Icon(Icons.email),
-                ),
-                keyboardType: TextInputType.emailAddress,
-              ),
+              _buildTextField(_signupEmailController, 'Email', Icons.email, keyboardType: TextInputType.emailAddress),
               const SizedBox(height: 20),
-              TextField(
-                controller: _signupPasswordController,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  prefixIcon: const Icon(Icons.lock),
-                ),
-                obscureText: true,
-              ),
+              _buildTextField(_signupPasswordController, 'Password', Icons.lock, isObscure: true),
               const SizedBox(height: 20),
-              TextField(
-                controller: _confirmPasswordController,
-                decoration: InputDecoration(
-                  labelText: 'Confirm Password',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  prefixIcon: const Icon(Icons.lock),
-                ),
-                obscureText: true,
-              ),
+              _buildTextField(_confirmPasswordController, 'Confirm Password', Icons.lock, isObscure: true),
               const SizedBox(height: 30),
-              ElevatedButton(
+              _isLoading
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
                 onPressed: _signup,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 50),
@@ -213,6 +180,22 @@ class SignupPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label, IconData icon,
+      {TextInputType keyboardType = TextInputType.text, bool isObscure = false}) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        prefixIcon: Icon(icon),
+      ),
+      keyboardType: keyboardType,
+      obscureText: isObscure,
     );
   }
 }

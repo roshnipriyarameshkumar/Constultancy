@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "464048890925",
+    "project_id": "consultancy-e70bb",
+    "storage_bucket": "consultancy-e70bb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:464048890925:android:be43d78eed226f081484a4",
+        "android_client_info": {
+          "package_name": "com.example.sample_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3FVcjFuGkpaL3kunYCvGlOw_jxQzeECI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

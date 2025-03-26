@@ -71,6 +71,11 @@ flutter:
      - /Users/adithyan/StudioProjects/Constultancy/assets/image4.avif
      - /Users/adithyan/StudioProjects/Constultancy/assets/image5.avif
      - /Users/adithyan/StudioProjects/Constultancy/assets/image6.avif
+     - /Users/adithyan/StudioProjects/Constultancy/assets/saree.webp
+     - /Users/adithyan/StudioProjects/Constultancy/assets/dress.jpg
+     - /Users/adithyan/StudioProjects/Constultancy/assets/kids.webp
+     - /Users/adithyan/StudioProjects/Constultancy/assets/linen.jpg
+     - /Users/adithyan/StudioProjects/Constultancy/assets/saree.webp
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
