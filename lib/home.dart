@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void addToCart(String product) {
+  void addToCart(String product ) {
     setState(() {
       cart.add(product);
     });
