@@ -1,7 +1,37 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  User? user = FirebaseAuth.instance.currentUser;
+  Map<String, dynamic>? userData;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    if (user != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .get();
+      if (userDoc.exists) {
+        setState(() {
+          userData = userDoc.data() as Map<String, dynamic>?;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,94 +45,52 @@ class ProfilePage extends StatelessWidget {
         child: Column(
           children: [
             // Profile Header Section
-            const CircleAvatar(
+            CircleAvatar(
               radius: 50,
-              backgroundImage: AssetImage('assets/profile_image.jpg'), // Replace with your image
+              backgroundImage: userData != null && userData!['profileImage'] != null
+                  ? NetworkImage(userData!['profileImage'])
+                  : const AssetImage('assets/profile_image.jpg') as ImageProvider,
             ),
             const SizedBox(height: 10),
-            const Text(
-              'Yukesh', // Replace with dynamic username
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              userData?['fullName'] ?? 'Loading...',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 5),
-            const Text(
-              'Yukesh@gmail.com', // Replace with dynamic email
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+            Text(
+              userData?['email'] ?? user?.email ?? 'Loading...',
+              style: const TextStyle(fontSize: 16, color: Colors.grey),
             ),
             const SizedBox(height: 20),
 
-            // List of Options (Customer Care, Terms, etc.)
+            // List of Options
             Expanded(
               child: ListView(
                 children: [
-                  // Customer Care
-                  ListTile(
-                    leading: const Icon(Icons.headset_mic, color: Colors.teal),
-                    title: const Text('Customer Care'),
-                    onTap: () {
-                      // Implement customer care logic
-                    },
-                  ),
-
-                  // Invite Friends
-                  ListTile(
-                    leading: const Icon(Icons.group_add, color: Colors.teal),
-                    title: const Text('Invite Friends'),
-                    onTap: () {
-                      // Implement invite friends logic
-                    },
-                  ),
-
-                  // Terms and Conditions
-                  ListTile(
-                    leading: const Icon(Icons.description, color: Colors.teal),
-                    title: const Text('Terms and Conditions'),
-                    onTap: () {
-                      // Implement Terms and Conditions logic
-                    },
-                  ),
-
-                  // Help
-                  ListTile(
-                    leading: const Icon(Icons.help, color: Colors.teal),
-                    title: const Text('Help'),
-                    onTap: () {
-                      // Implement Help logic
-                    },
-                  ),
-
-                  // How to Return Product
-                  ListTile(
-                    leading: const Icon(Icons.undo, color: Colors.teal),
-                    title: const Text('How to Return Product'),
-                    onTap: () {
-                      // Implement Return Product logic
-                    },
-                  ),
-
-                  // How to Redeem Coupon
-                  ListTile(
-                    leading: const Icon(Icons.card_giftcard, color: Colors.teal),
-                    title: const Text('How to Redeem Coupon'),
-                    onTap: () {
-                      // Implement Redeem Coupon logic
-                    },
-                  ),
-
-                  // Sign Out Option
-                  ListTile(
-                    leading: const Icon(Icons.exit_to_app, color: Colors.teal),
-                    title: const Text('Sign Out'),
-                    onTap: () {
-                      // Implement Sign Out logic
-                    },
-                  ),
+                  _buildListTile(Icons.headset_mic, 'Customer Care', () {}),
+                  _buildListTile(Icons.group_add, 'Invite Friends', () {}),
+                  _buildListTile(Icons.description, 'Terms and Conditions', () {}),
+                  _buildListTile(Icons.help, 'Help', () {}),
+                  _buildListTile(Icons.undo, 'How to Return Product', () {}),
+                  _buildListTile(Icons.card_giftcard, 'How to Redeem Coupon', () {}),
+                  _buildListTile(Icons.exit_to_app, 'Sign Out', () async {
+                    await FirebaseAuth.instance.signOut();
+                    Navigator.pushReplacementNamed(context, '/login');
+                  }),
                 ],
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildListTile(IconData icon, String title, VoidCallback onTap) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.teal),
+      title: Text(title),
+      onTap: onTap,
     );
   }
 }
