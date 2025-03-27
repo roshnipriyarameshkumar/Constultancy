@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'auth_service.dart';
-import 'product_form.dart';
 import 'login.dart';
+import 'product_management.dart';
+import 'order_details.dart';
+import 'cart_details.dart';
+import 'reports.dart';
+import 'analysis.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -20,6 +22,12 @@ class _AdminPageState extends State<AdminPage> {
         title: const Text('Admin Panel'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () {
+              // Handle alerts for low-stock products
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
@@ -29,64 +37,85 @@ class _AdminPageState extends State<AdminPage> {
           ),
         ],
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('products').snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text("No products added"));
-          }
-          var products = snapshot.data!.docs;
-          return ListView.builder(
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              var product = products[index].data() as Map<String, dynamic>;
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                child: ListTile(
-                  leading: product['images'] != null && product['images'].isNotEmpty
-                      ? Image.network(product['images'][0], width: 50, height: 50, fit: BoxFit.cover)
-                      : const Icon(Icons.image_not_supported),
-                  title: Text(product['name']),
-                  subtitle: Text(product['description']),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text("\$${product['price']}"),
-                      IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.black),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProductForm(
-                                productId: products[index].id,
-                                existingData: product,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const ProductForm(),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Text(
+                'Welcome, Admin',
+                style: TextStyle(fontSize: 24, color: Colors.white),
+              ),
             ),
-          );
-        },
+            ListTile(
+              leading: const Icon(Icons.shopping_bag),
+              title: const Text('Product Management'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProductManagementPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.receipt_long),
+              title: const Text('Order Details'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const OrderDetailsPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.shopping_cart),
+              title: const Text('Cart Details'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CartDetailsPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.bar_chart),
+              title: const Text('Reports'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ReportsPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.analytics),
+              title: const Text('Analysis'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AnalysisPage()),
+                );
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Logout'),
+              onTap: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (_) => LoginPage()));
+              },
+            ),
+          ],
+        ),
+      ),
+      body: const Center(
+        child: Text(
+          'Welcome, Admin',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
