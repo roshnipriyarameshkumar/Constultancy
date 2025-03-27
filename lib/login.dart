@@ -55,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
         _showSnackBar("Admin Login Successful!");
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const AdminPage()),
+          MaterialPageRoute(builder: (context) =>  AdminPage()),
         );
         return;
       }

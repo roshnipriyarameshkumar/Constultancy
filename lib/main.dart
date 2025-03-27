@@ -3,6 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:sample_app/signup.dart';
 import 'login.dart';
 import 'home.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'admin.dart';
+import 'homepage.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
