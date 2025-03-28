@@ -8,6 +8,7 @@ import 'ExplorePage.dart';
 import 'NotificationPage.dart';
 import 'WishlistPage.dart';
 import 'CategoriesPage.dart';
+import 'login.dart'; // Ensure you import your Login Page
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -25,6 +26,7 @@ class _HomePageState extends State<HomePage> {
     ExplorePage(),
     CategoriesPage(),
     ProfilePage(),
+    LoginPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -32,6 +34,15 @@ class _HomePageState extends State<HomePage> {
       _selectedIndex = index;
     });
     _pageController.jumpToPage(index);
+  }
+
+  Future<void> _signOut() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+          (route) => false, // Remove all previous routes from the stack
+    );
   }
 
   @override
@@ -78,32 +89,47 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               leading: Icon(Icons.home),
               title: Text('Home'),
-              onTap: () => _onItemTapped(0),
+              onTap: () {
+                Navigator.pop(context);
+                _onItemTapped(0);
+              },
             ),
             ListTile(
               leading: Icon(Icons.explore),
               title: Text('Explore'),
-              onTap: () => _onItemTapped(1),
+              onTap: () {
+                Navigator.pop(context);
+                _onItemTapped(1);
+              },
             ),
             ListTile(
               leading: Icon(Icons.category),
               title: Text('Categories'),
-              onTap: () => _onItemTapped(2),
+              onTap: () {
+                Navigator.pop(context);
+                _onItemTapped(2);
+              },
             ),
             ListTile(
               leading: Icon(Icons.favorite),
               title: Text('Wishlist'),
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => WishlistPage())),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => WishlistPage()));
+              },
             ),
             ListTile(
               leading: Icon(Icons.person),
               title: Text('Profile'),
-              onTap: () => _onItemTapped(3),
+              onTap: () {
+                Navigator.pop(context);
+                _onItemTapped(3);
+              },
             ),
             ListTile(
               leading: Icon(Icons.exit_to_app),
               title: Text('Logout'),
-              onTap: () {},
+              onTap: _signOut,
             ),
           ],
         ),
@@ -247,26 +273,14 @@ class HomePageBody extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    product['name'] ?? 'Unknown',
-                                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                  ),
+                                  Text(product['name'] ?? 'Unknown', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                                   const SizedBox(height: 5),
-                                  Text(
-                                    '₹${product['price'] ?? '0'}',
-                                    style: const TextStyle(fontSize: 14, color: Colors.indigo),
-                                  ),
+                                  Text('₹${product['price'] ?? '0'}', style: const TextStyle(fontSize: 14, color: Colors.indigo)),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.shopping_cart, color: Colors.indigo),
-                                        onPressed: () => addToCart(productId, product),
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.favorite_border, color: Colors.red),
-                                        onPressed: () => addToWishlist(productId, product),
-                                      ),
+                                      IconButton(icon: const Icon(Icons.shopping_cart, color: Colors.indigo), onPressed: () => addToCart(productId, product)),
+                                      IconButton(icon: const Icon(Icons.favorite_border, color: Colors.red), onPressed: () => addToWishlist(productId, product)),
                                     ],
                                   ),
                                 ],
