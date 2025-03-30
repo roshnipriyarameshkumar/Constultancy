@@ -1,0 +1,2 @@
+/Users/adithyan/StudioProjects/Constultancy/android/app/.cxx/RelWithDebInfo/354eoj2q/x86_64/CMakeFiles/edit_cache.dir
+/Users/adithyan/StudioProjects/Constultancy/android/app/.cxx/RelWithDebInfo/354eoj2q/x86_64/CMakeFiles/rebuild_cache.dir

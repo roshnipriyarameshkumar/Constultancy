@@ -63,38 +63,73 @@ class _AdminPageState extends State<AdminPage> {
     return base64Decode(base64String);
   }
 
-  void _addOrUpdateProduct() async {
-    String name = _nameController.text;
-    String price = _priceController.text;
-    String quantity = _quantityController.text;
-    String description = _descriptionController.text;
-    String color = _colorController.text;
-
-    if (name.isEmpty || price.isEmpty || quantity.isEmpty || description.isEmpty || color.isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Please fill all fields")));
-      return;
-    }
-
-    Map<String, dynamic> productData = {
-      'name': name,
-      'price': price,
-      'quantity': quantity,
-      'description': description,
-      'color': color,
-      'imageBase64': _imageBase64,
-    };
-
-    if (_editingProductId == null) {
-      await FirebaseFirestore.instance.collection('products').add(productData);
-    } else {
-      await FirebaseFirestore.instance
-          .collection('products')
-          .doc(_editingProductId)
-          .update(productData);
-    }
-
+  void _addOrUpdateProduct({String? productId}) {
     _resetForm();
+    setState(() {
+      _editingProductId = productId;
+      _isAddingProduct = true;
+    });
+    _showAddProductDialog();
+  }
+
+  void _showAddProductDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(_editingProductId == null ? "Add Product" : "Edit Product"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(controller: _nameController, decoration: InputDecoration(labelText: "Product Name")),
+              TextField(controller: _priceController, decoration: InputDecoration(labelText: "Price")),
+              TextField(controller: _quantityController, decoration: InputDecoration(labelText: "Quantity")),
+              TextField(controller: _descriptionController, decoration: InputDecoration(labelText: "Description")),
+              TextField(controller: _colorController, decoration: InputDecoration(labelText: "Color")),
+              ElevatedButton(onPressed: _pickImage, child: Text("Pick Image")),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _resetForm();
+              },
+              child: Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (_nameController.text.isEmpty || _priceController.text.isEmpty ||
+                    _quantityController.text.isEmpty || _descriptionController.text.isEmpty ||
+                    _colorController.text.isEmpty) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(const SnackBar(content: Text("Please fill all fields")));
+                  return;
+                }
+
+                Map<String, dynamic> productData = {
+                  'name': _nameController.text,
+                  'price': _priceController.text,
+                  'quantity': _quantityController.text,
+                  'description': _descriptionController.text,
+                  'color': _colorController.text,
+                  'imageBase64': _imageBase64,
+                };
+
+                if (_editingProductId == null) {
+                  await FirebaseFirestore.instance.collection('products').add(productData);
+                } else {
+                  await FirebaseFirestore.instance.collection('products').doc(_editingProductId).update(productData);
+                }
+                Navigator.of(context).pop();
+                _resetForm();
+              },
+              child: Text(_editingProductId == null ? "Add" : "Update"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _deleteProduct(String productId) async {
@@ -110,104 +145,59 @@ class _AdminPageState extends State<AdminPage> {
     _imageBytes = null;
     _imageBase64 = null;
     _editingProductId = null;
-    setState(() {
-      _isAddingProduct = false;
-    });
+    _isAddingProduct = false;
   }
 
   Widget _buildProductList() {
-    return Expanded(
-      child: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('products').snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          var products = snapshot.data!.docs;
-          return ListView.builder(
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              var product = products[index];
-              var productData = product.data() as Map<String, dynamic>;
-              return Card(
-                margin: const EdgeInsets.all(8),
-                child: ListTile(
-                  leading: productData['imageBase64'] != null
-                      ? Image.memory(_convertBase64ToImage(productData['imageBase64']), width: 50, height: 50, fit: BoxFit.cover)
-                      : const Icon(Icons.image, size: 50),
-                  title: Text(productData['name'] ?? "Unknown"),
-                  subtitle: Text("Price: \$${productData['price']}"),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () {
-                          _editProduct(product);
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          _deleteProduct(product.id);
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      ),
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('products').snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        var products = snapshot.data!.docs;
+        return ListView.builder(
+          itemCount: products.length,
+          itemBuilder: (context, index) {
+            var product = products[index];
+            var productData = product.data() as Map<String, dynamic>;
+            return ListTile(
+              leading: productData['imageBase64'] != null
+                  ? Image.memory(_convertBase64ToImage(productData['imageBase64']), width: 50, height: 50)
+                  : null,
+              title: Text(productData['name']),
+              subtitle: Text("Price: \$${productData['price']}"),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(icon: Icon(Icons.edit), onPressed: () => _addOrUpdateProduct(productId: product.id)),
+                  IconButton(icon: Icon(Icons.delete), onPressed: () => _deleteProduct(product.id)),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
-  }
-
-  void _editProduct(DocumentSnapshot product) {
-    var productData = product.data() as Map<String, dynamic>;
-    setState(() {
-      _nameController.text = productData['name'];
-      _priceController.text = productData['price'];
-      _quantityController.text = productData['quantity'];
-      _descriptionController.text = productData['description'];
-      _colorController.text = productData['color'];
-      _imageBase64 = productData['imageBase64'];
-      _imageBytes = _imageBase64 != null ? _convertBase64ToImage(_imageBase64!) : null;
-      _editingProductId = product.id;
-      _isAddingProduct = true;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Admin Panel'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginPage()));
-            },
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          if (_isAddingProduct) ...[
-            TextField(controller: _nameController, decoration: const InputDecoration(labelText: "Product Name")),
-            TextField(controller: _priceController, decoration: const InputDecoration(labelText: "Price")),
-            TextField(controller: _quantityController, decoration: const InputDecoration(labelText: "Quantity")),
-            TextField(controller: _descriptionController, decoration: const InputDecoration(labelText: "Description")),
-            TextField(controller: _colorController, decoration: const InputDecoration(labelText: "Color")),
-            if (_imageBytes != null) Image.memory(_imageBytes!, width: 100, height: 100),
-            ElevatedButton(onPressed: _pickImage, child: const Text("Upload Image")),
-            ElevatedButton(onPressed: _addOrUpdateProduct, child: const Text("Save Product")),
+      appBar: AppBar(title: const Text('Admin Panel')),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            ListTile(title: Text('Home'), onTap: () {}),
+            ListTile(title: Text('Profile'), onTap: () {}),
+            ListTile(title: Text('Sales Insights'), onTap: () {}),
+            ListTile(title: Text('More'), onTap: () {}),
+            ListTile(title: Text('Sign Out'), onTap: () {}),
           ],
-          _buildProductList(),
-        ],
+        ),
       ),
+      body: SafeArea(child: Column(children: [Expanded(child: _buildProductList())])),
+      floatingActionButton: FloatingActionButton(onPressed: () => _addOrUpdateProduct(), child: const Icon(Icons.add)),
     );
   }
 }

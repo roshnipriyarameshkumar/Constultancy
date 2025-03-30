@@ -1,0 +1,2 @@
+/Users/adithyan/StudioProjects/Constultancy/android/app/.cxx/RelWithDebInfo/354eoj2q/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/adithyan/StudioProjects/Constultancy/android/app/.cxx/RelWithDebInfo/354eoj2q/armeabi-v7a/CMakeFiles/rebuild_cache.dir
