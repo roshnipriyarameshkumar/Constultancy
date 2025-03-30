@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -8,7 +10,7 @@ import 'ExplorePage.dart';
 import 'NotificationPage.dart';
 import 'WishlistPage.dart';
 import 'CategoriesPage.dart';
-import 'login.dart'; // Ensure you import your Login Page
+import 'login.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -26,7 +28,6 @@ class _HomePageState extends State<HomePage> {
     ExplorePage(),
     CategoriesPage(),
     ProfilePage(),
-    LoginPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -41,7 +42,7 @@ class _HomePageState extends State<HomePage> {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => LoginPage()),
-          (route) => false, // Remove all previous routes from the stack
+          (route) => false,
     );
   }
 
@@ -78,62 +79,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(color: Colors.indigo),
-              child: Text('Menu', style: TextStyle(color: Colors.white, fontSize: 24)),
-            ),
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text('Home'),
-              onTap: () {
-                Navigator.pop(context);
-                _onItemTapped(0);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.explore),
-              title: Text('Explore'),
-              onTap: () {
-                Navigator.pop(context);
-                _onItemTapped(1);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.category),
-              title: Text('Categories'),
-              onTap: () {
-                Navigator.pop(context);
-                _onItemTapped(2);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.favorite),
-              title: Text('Wishlist'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (context) => WishlistPage()));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text('Profile'),
-              onTap: () {
-                Navigator.pop(context);
-                _onItemTapped(3);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.exit_to_app),
-              title: Text('Logout'),
-              onTap: _signOut,
-            ),
-          ],
-        ),
-      ),
       body: PageView(
         controller: _pageController,
         children: _pages,
@@ -144,24 +89,11 @@ class _HomePageState extends State<HomePage> {
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
         items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: _selectedIndex == 0 ? Colors.indigo : Colors.grey),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.explore, color: _selectedIndex == 1 ? Colors.orange : Colors.grey),
-            label: 'Explore',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.category, color: _selectedIndex == 2 ? Colors.green : Colors.grey),
-            label: 'Categories',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person, color: _selectedIndex == 3 ? Colors.blue : Colors.grey),
-            label: 'Profile',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Explore'),
+          BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Categories'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.indigo,
@@ -173,28 +105,29 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-/// HomePage Body with Firestore Integration
 class HomePageBody extends StatelessWidget {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   Future<void> addToCart(String productId, Map<String, dynamic> product) async {
     String userId = auth.currentUser!.uid;
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('cart')
-        .doc(productId)
-        .set(product);
+    await FirebaseFirestore.instance.collection('users').doc(userId).collection('cart').doc(productId).set(product);
   }
 
   Future<void> addToWishlist(String productId, Map<String, dynamic> product) async {
     String userId = auth.currentUser!.uid;
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('wishlist')
-        .doc(productId)
-        .set(product);
+    await FirebaseFirestore.instance.collection('users').doc(userId).collection('wishlist').doc(productId).set(product);
+  }
+
+  Uint8List decodeImage(String? base64String) {
+    if (base64String == null || base64String.isEmpty) {
+      return Uint8List(0);
+    }
+    try {
+      return base64Decode(base64String);
+    } catch (e) {
+      print('Error decoding image: $e');
+      return Uint8List(0);
+    }
   }
 
   @override
@@ -206,12 +139,7 @@ class HomePageBody extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 15),
             child: CarouselSlider(
-              items: [
-                'assets/image3.jpeg',
-                'assets/image4.avif',
-                'assets/image5.avif',
-                'assets/image6.avif'
-              ].map((image) {
+              items: ['assets/image1.jpg', 'assets/image2.jpg', 'assets/image3.jpg', 'assets/image4.jpg'].map((image) {
                 return Container(
                   margin: const EdgeInsets.symmetric(horizontal: 5),
                   decoration: BoxDecoration(
@@ -223,18 +151,14 @@ class HomePageBody extends StatelessWidget {
                   ),
                 );
               }).toList(),
-              options: CarouselOptions(
-                height: 150,
-                autoPlay: true,
-                enlargeCenterPage: true,
-              ),
+              options: CarouselOptions(height: 150, autoPlay: true, enlargeCenterPage: true),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
             child: Text(
-              'Latest Products',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              'Trending Products',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
           StreamBuilder<QuerySnapshot>(
@@ -244,54 +168,47 @@ class HomePageBody extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               }
               var products = snapshot.data!.docs;
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: products.map((doc) {
-                    var product = doc.data() as Map<String, dynamic>;
-                    String productId = doc.id;
-
-                    return Card(
-                      margin: const EdgeInsets.all(10),
-                      child: SizedBox(
-                        width: 160,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 120,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: NetworkImage(product['image'] ?? 'https://via.placeholder.com/150'),
-                                  fit: BoxFit.cover,
-                                ),
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(product['name'] ?? 'Unknown', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                                  const SizedBox(height: 5),
-                                  Text('₹${product['price'] ?? '0'}', style: const TextStyle(fontSize: 14, color: Colors.indigo)),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      IconButton(icon: const Icon(Icons.shopping_cart, color: Colors.indigo), onPressed: () => addToCart(productId, product)),
-                                      IconButton(icon: const Icon(Icons.favorite_border, color: Colors.red), onPressed: () => addToWishlist(productId, product)),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 0.8,
                 ),
+                itemCount: products.length,
+                itemBuilder: (context, index) {
+                  var product = products[index].data() as Map<String, dynamic>;
+                  String productId = products[index].id;
+                  Uint8List imageBytes = decodeImage(product['image']);
+
+                  return Card(
+                    margin: const EdgeInsets.all(10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: 120,
+                          child: imageBytes.isNotEmpty
+                              ? Image.memory(imageBytes, fit: BoxFit.cover)
+                              : Center(child: CircularProgressIndicator()),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(product['name'] ?? 'Unknown', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 5),
+                              Text('₹${product['price'] ?? '0'}', style: const TextStyle(fontSize: 14, color: Colors.indigo)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               );
             },
           ),

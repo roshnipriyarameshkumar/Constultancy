@@ -97,6 +97,10 @@ class _AdminPageState extends State<AdminPage> {
     _resetForm();
   }
 
+  void _deleteProduct(String productId) async {
+    await FirebaseFirestore.instance.collection('products').doc(productId).delete();
+  }
+
   void _resetForm() {
     _nameController.clear();
     _priceController.clear();
@@ -133,11 +137,22 @@ class _AdminPageState extends State<AdminPage> {
                       : const Icon(Icons.image, size: 50),
                   title: Text(productData['name'] ?? "Unknown"),
                   subtitle: Text("Price: \$${productData['price']}"),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () {
-                      _editProduct(product);
-                    },
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () {
+                          _editProduct(product);
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          _deleteProduct(product.id);
+                        },
+                      ),
+                    ],
                   ),
                 ),
               );
@@ -192,14 +207,6 @@ class _AdminPageState extends State<AdminPage> {
           ],
           _buildProductList(),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            _isAddingProduct = true;
-          });
-        },
-        child: const Icon(Icons.add),
       ),
     );
   }
