@@ -192,16 +192,7 @@ class _AdminPageState extends State<AdminPage> {
             ListTile(title: Text('Profile'), onTap: () {}),
             ListTile(title: Text('Sales Insights'), onTap: () {}),
             ListTile(title: Text('More'), onTap: () {}),
-            ListTile(
-              title: Text('Sign Out'),
-              onTap: () async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
-                );
-              },
-            ),
+            ListTile(title: Text('Sign Out'), onTap: () {}),
           ],
         ),
       ),
