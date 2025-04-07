@@ -1,50 +1,86 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'OrderConfirmationPage.dart';
 
-class OrderConfirmationPage extends StatelessWidget {
+class PaymentPage extends StatelessWidget {
+  final String orderId;
   final double totalAmount;
-  final String name;
-  final String address;
-  final String paymentMethod;
+  final List<Map<String, dynamic>> cartItems;
+  final String name;  // Added name parameter
+  final String address;  // Added address p, required, required String address String namearameter
 
-  OrderConfirmationPage({
+  // Constructor to accept parameters
+  PaymentPage({
+    required this.orderId,
     required this.totalAmount,
+    required this.cartItems,
     required this.name,
     required this.address,
-    required this.paymentMethod,
   });
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
+  Future<void> processPayment(BuildContext context) async {
+    String userId = auth.currentUser?.uid ?? "";
+    if (userId.isEmpty) return;
+
+    try {
+      // Simulate successful payment update in Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('orders')
+          .doc(orderId)
+          .update({
+        'status': 'Paid',
+        'paymentMethod': 'Online Payment',
+      });
+
+      // Reduce stock quantity for ordered products
+      for (var item in cartItems) {
+        String productId = item['productId'];
+        int quantityOrdered = item['quantity'];
+
+        DocumentReference productRef = FirebaseFirestore.instance.collection('products').doc(productId);
+
+        await FirebaseFirestore.instance.runTransaction((transaction) async {
+          DocumentSnapshot snapshot = await transaction.get(productRef);
+          if (snapshot.exists) {
+            int currentStock = snapshot['quantity'] ?? 0;
+            int newStock = currentStock - quantityOrdered;
+            if (newStock >= 0) {
+              transaction.update(productRef, {'quantity': newStock});
+            }
+          }
+        });
+      }
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => OrderConfirmationPage(
+            orderId: orderId,
+            totalAmount: totalAmount,
+            name: name,
+            address: address,
+          ),
+        ),
+      );
+    } catch (e) {
+      print("Error processing payment: $e");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Payment failed. Try again.")));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Order Confirmation")),
+      appBar: AppBar(title: Text("Payment")),
       body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.check_circle, color: Colors.green, size: 100),
-              SizedBox(height: 20),
-              Text("Payment is Done!", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green)),
-              SizedBox(height: 10),
-              Text("Thank you, $name", style: TextStyle(fontSize: 18)),
-              SizedBox(height: 5),
-              Text("Shipping to: $address", style: TextStyle(fontSize: 18)),
-              SizedBox(height: 10),
-              Text("Payment Method: $paymentMethod", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-              SizedBox(height: 20),
-              Text("Total Amount: ₹${totalAmount.toStringAsFixed(2)}",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green)),
-              SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.popUntil(context, (route) => route.isFirst);
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, minimumSize: Size(200, 50)),
-                child: Text("Back to Home", style: TextStyle(fontSize: 18, color: Colors.white)),
-              ),
-            ],
-          ),
+        child: ElevatedButton(
+          onPressed: () => processPayment(context),
+          child: Text("Complete Payment"),
         ),
       ),
     );

@@ -280,9 +280,12 @@ class HomePageBody extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => ProductDetailsPage(
-                              productId: productId, productData: product),
+                            productId: productId,
+                            productData: product ?? {}, // Ensure productData is not null
+                          ),
                         ),
                       );
+
                     },
                     child: Card(
                       elevation: 4,
