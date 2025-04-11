@@ -5,7 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:sample_app/reports_page.dart';
+import 'admin_orders.dart';
 import 'login.dart';
+import 'reports_page.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -184,20 +187,80 @@ class _AdminPageState extends State<AdminPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Admin Panel')),
+      appBar: AppBar(
+        title: const Text('Admin Panel', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.indigo,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
       drawer: Drawer(
+        backgroundColor: Colors.indigo[700],
         child: ListView(
+          padding: EdgeInsets.zero,
           children: [
-            ListTile(title: Text('Home'), onTap: () {}),
-            ListTile(title: Text('Profile'), onTap: () {}),
-            ListTile(title: Text('Sales Insights'), onTap: () {}),
-            ListTile(title: Text('More'), onTap: () {}),
-            ListTile(title: Text('Sign Out'), onTap: () {}),
+            DrawerHeader(
+              decoration: BoxDecoration(color: Colors.indigo),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text('👤 Admin', style: TextStyle(color: Colors.white, fontSize: 22)),
+                  SizedBox(height: 8),
+                  Text('Manage your store', style: TextStyle(color: Colors.white70)),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.dashboard, color: Colors.white),
+              title: Text('📦 Order Status', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AdminOrdersPage()),
+                );
+              },
+            ),
+
+            ListTile(
+              leading: Icon(Icons.bar_chart, color: Colors.white),
+              title: Text('📊 Sales Insights', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                // TODO: Navigate to Sales Insights Page
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.insert_drive_file, color: Colors.white),
+              title: Text('📄 Reports', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ReportsPage(),
+                  ),
+                );
+              },
+            ),
+
+            ListTile(
+              leading: Icon(Icons.logout, color: Colors.white),
+              title: Text('🚪 Sign Out', style: TextStyle(color: Colors.white)),
+              onTap: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (context) => LoginPage()));
+              },
+            ),
           ],
         ),
       ),
-      body: SafeArea(child: Column(children: [Expanded(child: _buildProductList())])),
-      floatingActionButton: FloatingActionButton(onPressed: () => _addOrUpdateProduct(), child: const Icon(Icons.add)),
+      body: SafeArea(
+        child: Column(
+          children: [Expanded(child: _buildProductList())],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _addOrUpdateProduct(),
+        backgroundColor: Colors.indigo,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
     );
   }
 }

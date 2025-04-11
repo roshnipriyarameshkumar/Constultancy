@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'orderinfo.dart';
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -68,8 +70,12 @@ class _ProfilePageState extends State<ProfilePage> {
               child: ListView(
                 children: [
                   _buildListTile(Icons.shopping_bag, 'Orders', () {
-                    Navigator.pushNamed(context, '/orders'); // Replace with your actual orders route
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const OrderInfoPage()),
+                    );
                   }),
+
                   _buildListTile(Icons.description, 'Terms and Conditions', () {
                     // Navigate to terms and conditions page
                   }),

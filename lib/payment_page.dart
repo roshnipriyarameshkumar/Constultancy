@@ -36,7 +36,7 @@ class _PaymentPageState extends State<PaymentPage> {
     try {
       final orderId = FirebaseFirestore.instance.collection('orders').doc().id;
       final userId = user.uid;
-      final timestamp = FieldValue.serverTimestamp();
+      final timestamp = DateTime.now(); // ✅ Using exact DateTime for sorting
       final cartIds = widget.cartItems.map((item) => item['cartItemId']).toList();
 
       Map<String, dynamic> productMap = {};
@@ -96,7 +96,8 @@ class _PaymentPageState extends State<PaymentPage> {
         'products': productMap,
         'cartIds': cartIds,
         'totalAmount': widget.totalAmount.toStringAsFixed(2),
-        'timestamp': timestamp,
+        'timestamp': timestamp, // ✅ Save exact DateTime
+        'deliveryStatus': 'Placed', // ✅ Initial delivery status
       });
 
       // Delete cart items
@@ -117,6 +118,7 @@ class _PaymentPageState extends State<PaymentPage> {
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
