@@ -33,7 +33,7 @@ class _AddressPageState extends State<AddressPage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => PaymentPage(
+          builder: (_) =>PaymentPage(
             cartItems: widget.cartItems,
             address: address,
             totalAmount: widget.totalAmount,

@@ -68,7 +68,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection('cart')
           .where('userId', isEqualTo: userId)
-          .where('name', isEqualTo: productName)
+          .where('productId', isEqualTo: widget.productId)
           .get();
 
       if (snapshot.docs.isNotEmpty) {
@@ -87,6 +87,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         String cartItemId = FirebaseFirestore.instance.collection('cart').doc().id;
         await FirebaseFirestore.instance.collection('cart').doc(cartItemId).set({
           'cartItemId': cartItemId,
+          'productId': widget.productId, // ✅ include productId
           'userId': userId,
           'name': productName,
           'price': productData!['price'] ?? '0.0',
@@ -106,6 +107,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     }
   }
 
+
   Future<void> addToWishlist() async {
     if (auth.currentUser == null || productData == null) return;
 
@@ -116,7 +118,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection('wishlist')
           .where('userId', isEqualTo: userId)
-          .where('name', isEqualTo: productName)
+          .where('productId', isEqualTo: widget.productId)
           .get();
 
       if (snapshot.docs.isNotEmpty) {
@@ -129,6 +131,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       String wishlistItemId = FirebaseFirestore.instance.collection('wishlist').doc().id;
       await FirebaseFirestore.instance.collection('wishlist').doc(wishlistItemId).set({
         'wishlistItemId': wishlistItemId,
+        'productId': widget.productId, // ✅ include productId
         'userId': userId,
         'name': productName,
         'price': productData!['price'] ?? '0.0',
@@ -145,6 +148,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       print("Error adding to wishlist: $e");
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
