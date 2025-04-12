@@ -61,7 +61,7 @@ class _CartPageState extends State<CartPage> {
           onPressed: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const HomePage()),
+              MaterialPageRoute(builder: (context) =>  const HomePage()),
             );
           },
         ),

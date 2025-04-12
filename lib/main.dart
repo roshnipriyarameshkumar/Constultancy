@@ -45,7 +45,7 @@ class AuthWrapper extends StatelessWidget {
           if (user == null) {
             return const SignupPage(); // If not logged in, show SignupPage
           } else {
-            return const HomePage(); // If logged in, redirect to HomePage
+            return HomePage(); // If logged in, redirect to HomePage
           }
         }
         return const Center(child: CircularProgressIndicator()); // Show loader while checking

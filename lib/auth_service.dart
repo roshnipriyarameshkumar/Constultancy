@@ -23,7 +23,7 @@ class AuthService {
               }
               final userData = userSnapshot.data!;
               final role = userData['role'] ?? 'user';
-              return role == 'admin' ? AdminPage() : HomePage();
+              return role == 'admin' ? AdminPage() : const HomePage();
 
             },
           );

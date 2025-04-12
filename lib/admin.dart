@@ -37,15 +37,16 @@ class _AdminPageState extends State<AdminPage> {
           _imageBase64 = base64String;
         });
       } catch (e) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Image processing error: $e")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Image processing error: $e")),
+        );
       }
     }
   }
 
   Future<Uint8List> _compressImage(Uint8List imageBytes) async {
     try {
-      var result = await FlutterImageCompress.compressWithList(
+      final result = await FlutterImageCompress.compressWithList(
         imageBytes,
         quality: 80,
       );
@@ -78,16 +79,39 @@ class _AdminPageState extends State<AdminPage> {
       builder: (context) {
         return AlertDialog(
           title: Text(_editingProductId == null ? "Add Product" : "Edit Product"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(controller: _nameController, decoration: InputDecoration(labelText: "Product Name")),
-              TextField(controller: _priceController, decoration: InputDecoration(labelText: "Price")),
-              TextField(controller: _quantityController, decoration: InputDecoration(labelText: "Quantity")),
-              TextField(controller: _descriptionController, decoration: InputDecoration(labelText: "Description")),
-              TextField(controller: _colorController, decoration: InputDecoration(labelText: "Color")),
-              ElevatedButton(onPressed: _pickImage, child: Text("Pick Image")),
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(labelText: "Product Name"),
+                ),
+                TextField(
+                  controller: _priceController,
+                  decoration: const InputDecoration(labelText: "Price"),
+                ),
+                TextField(
+                  controller: _quantityController,
+                  decoration: const InputDecoration(labelText: "Quantity"),
+                ),
+                TextField(
+                  controller: _descriptionController,
+                  decoration: const InputDecoration(labelText: "Description"),
+                ),
+                TextField(
+                  controller: _colorController,
+                  decoration: const InputDecoration(labelText: "Color"),
+                ),
+                ElevatedButton(
+                  onPressed: _pickImage,
+                  child: const Text("Pick Image"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.indigo,
+                  ),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -95,15 +119,17 @@ class _AdminPageState extends State<AdminPage> {
                 Navigator.of(context).pop();
                 _resetForm();
               },
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
             ),
             ElevatedButton(
               onPressed: () async {
-                if (_nameController.text.isEmpty || _priceController.text.isEmpty ||
-                    _quantityController.text.isEmpty || _descriptionController.text.isEmpty ||
+                if (_nameController.text.isEmpty ||
+                    _priceController.text.isEmpty ||
+                    _quantityController.text.isEmpty ||
+                    _descriptionController.text.isEmpty ||
                     _colorController.text.isEmpty) {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(const SnackBar(content: Text("Please fill all fields")));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Please fill all fields")));
                   return;
                 }
 
@@ -117,14 +143,22 @@ class _AdminPageState extends State<AdminPage> {
                 };
 
                 if (_editingProductId == null) {
-                  await FirebaseFirestore.instance.collection('products').add(productData);
+                  await FirebaseFirestore.instance
+                      .collection('products')
+                      .add(productData);
                 } else {
-                  await FirebaseFirestore.instance.collection('products').doc(_editingProductId).update(productData);
+                  await FirebaseFirestore.instance
+                      .collection('products')
+                      .doc(_editingProductId)
+                      .update(productData);
                 }
                 Navigator.of(context).pop();
                 _resetForm();
               },
               child: Text(_editingProductId == null ? "Add" : "Update"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.indigo,
+              ),
             ),
           ],
         );
@@ -148,6 +182,7 @@ class _AdminPageState extends State<AdminPage> {
     _isAddingProduct = false;
   }
 
+  // Builds a list view of products.
   Widget _buildProductList() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('products').snapshots(),
@@ -157,21 +192,32 @@ class _AdminPageState extends State<AdminPage> {
         }
         var products = snapshot.data!.docs;
         return ListView.builder(
+          shrinkWrap: true,
           itemCount: products.length,
           itemBuilder: (context, index) {
             var product = products[index];
             var productData = product.data() as Map<String, dynamic>;
             return ListTile(
               leading: productData['imageBase64'] != null
-                  ? Image.memory(_convertBase64ToImage(productData['imageBase64']), width: 50, height: 50)
+                  ? Image.memory(
+                _convertBase64ToImage(productData['imageBase64']),
+                width: 50,
+                height: 50,
+              )
                   : null,
               title: Text(productData['name']),
               subtitle: Text("Price: \$${productData['price']}"),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  IconButton(icon: Icon(Icons.edit), onPressed: () => _addOrUpdateProduct(productId: product.id)),
-                  IconButton(icon: Icon(Icons.delete), onPressed: () => _deleteProduct(product.id)),
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () => _addOrUpdateProduct(productId: product.id),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () => _deleteProduct(product.id),
+                  ),
                 ],
               ),
             );
@@ -181,23 +227,101 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
+  // Builds a list view for custom order notifications with a back button.
+  Widget _buildCustomOrderNotifications() {
+    return SafeArea(
+      child: Column(
+        children: [
+          // Back button row.
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  // Navigate back to the previous screen.
+                  Navigator.pop(context);
+                },
+              ),
+              const Text(
+                "Custom Orders",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          // Expanded list of notifications.
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('adminNotifications')
+                  .orderBy('timestamp', descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                var notifications = snapshot.data!.docs;
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: notifications.length,
+                  itemBuilder: (context, index) {
+                    var notif = notifications[index].data() as Map<String, dynamic>;
+                    return ListTile(
+                      leading: const Icon(Icons.notification_important),
+                      title: Text(notif['message'] ?? ''),
+                      subtitle: Text(notif['order'] != null
+                          ? "Order details: ${notif['order']}"
+                          : ''),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Admin Panel')),
-      drawer: Drawer(
-        child: ListView(
+    return DefaultTabController(
+      length: 2, // Two tabs: Products and Custom Orders Notifications.
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Admin Panel'),
+          backgroundColor: Colors.indigo,
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: "Products"),
+              Tab(text: "Custom Orders"),
+            ],
+          ),
+        ),
+        drawer: Drawer(
+          child: ListView(
+            children: [
+              ListTile(title: const Text('Home'), onTap: () {}),
+              ListTile(title: const Text('Profile'), onTap: () {}),
+              ListTile(title: const Text('Sales Insights'), onTap: () {}),
+              ListTile(title: const Text('More'), onTap: () {}),
+              ListTile(title: const Text('Sign Out'), onTap: () {}),
+            ],
+          ),
+        ),
+        body: TabBarView(
           children: [
-            ListTile(title: Text('Home'), onTap: () {}),
-            ListTile(title: Text('Profile'), onTap: () {}),
-            ListTile(title: Text('Sales Insights'), onTap: () {}),
-            ListTile(title: Text('More'), onTap: () {}),
-            ListTile(title: Text('Sign Out'), onTap: () {}),
+            // Tab 1: Product management.
+            SafeArea(child: _buildProductList()),
+            // Tab 2: Custom orders notifications.
+            SafeArea(child: _buildCustomOrderNotifications()),
           ],
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => _addOrUpdateProduct(),
+          child: const Icon(Icons.add),
+          backgroundColor: Colors.indigo,
+        ),
       ),
-      body: SafeArea(child: Column(children: [Expanded(child: _buildProductList())])),
-      floatingActionButton: FloatingActionButton(onPressed: () => _addOrUpdateProduct(), child: const Icon(Icons.add)),
     );
   }
 }
