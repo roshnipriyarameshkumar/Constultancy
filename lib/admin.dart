@@ -6,7 +6,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:sample_app/reports_page.dart';
+import 'package:sample_app/restore_alert_page.dart';
+import 'package:sample_app/user_logs_page.dart';
+import 'admin_add_offer.dart';
 import 'admin_orders.dart';
+import 'inventory_management_page.dart';
 import 'login.dart';
 import 'reports_page.dart';
 
@@ -191,6 +195,18 @@ class _AdminPageState extends State<AdminPage> {
         title: const Text('Admin Panel', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.indigo,
         iconTheme: const IconThemeData(color: Colors.white),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications, color: Colors.white),
+            onPressed: () {
+              // Navigate to the RestoreAlertPage
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => RestoreAlertPage()),
+              );
+            },
+          ),
+        ],
       ),
       drawer: Drawer(
         backgroundColor: Colors.indigo[700],
@@ -208,9 +224,10 @@ class _AdminPageState extends State<AdminPage> {
                 ],
               ),
             ),
+
             ListTile(
               leading: Icon(Icons.dashboard, color: Colors.white),
-              title: Text('📦 Order Status', style: TextStyle(color: Colors.white)),
+              title: Text('Order Status', style: TextStyle(color: Colors.white)),
               onTap: () {
                 Navigator.push(
                   context,
@@ -220,32 +237,66 @@ class _AdminPageState extends State<AdminPage> {
             ),
 
             ListTile(
+              leading: Icon(Icons.people_alt, color: Colors.white),
+              title: Text('User Logs', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UserLogsPage()),
+                );
+              },
+            ),
+
+            ListTile(
+              leading: Icon(Icons.local_offer, color: Colors.white),
+              title: Text('Offers', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AdminAddOfferPage()),
+                );
+              },
+
+            ),
+            ListTile(
+              leading: Icon(Icons.inventory_2, color: Colors.white),
+              title: Text('Inventory', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const InventoryManagementPage()),
+                );
+              },
+            ),
+
+            ListTile(
               leading: Icon(Icons.bar_chart, color: Colors.white),
-              title: Text('📊 Sales Insights', style: TextStyle(color: Colors.white)),
+              title: Text('Sales Insights', style: TextStyle(color: Colors.white)),
               onTap: () {
                 // TODO: Navigate to Sales Insights Page
               },
             ),
+
             ListTile(
               leading: Icon(Icons.insert_drive_file, color: Colors.white),
-              title: Text('📄 Reports', style: TextStyle(color: Colors.white)),
+              title: Text('Reports', style: TextStyle(color: Colors.white)),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => ReportsPage(),
-                  ),
+                  MaterialPageRoute(builder: (context) => ReportsPage()),
                 );
               },
             ),
 
             ListTile(
               leading: Icon(Icons.logout, color: Colors.white),
-              title: Text('🚪 Sign Out', style: TextStyle(color: Colors.white)),
+              title: Text('Sign Out', style: TextStyle(color: Colors.white)),
               onTap: () async {
                 await FirebaseAuth.instance.signOut();
                 Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (context) => LoginPage()));
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
               },
             ),
           ],
@@ -263,4 +314,6 @@ class _AdminPageState extends State<AdminPage> {
       ),
     );
   }
+
+
 }

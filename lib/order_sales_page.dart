@@ -40,7 +40,7 @@ class _OrderSalesPageState extends State<OrderSalesPage> {
         if (picked != null) {
           setState(() {
             startDate = picked.start;
-            endDate = picked.end;
+            endDate = picked.end.add(Duration(hours: 23, minutes: 59, seconds: 59));
           });
           await generateReport();
         }
@@ -62,27 +62,29 @@ class _OrderSalesPageState extends State<OrderSalesPage> {
                   DropdownButtonFormField<int>(
                     value: selectedStartMonth,
                     items: List.generate(
-                        12,
-                            (i) => DropdownMenuItem(
-                          value: i + 1,
-                          child: Text(
-                              DateFormat.MMMM().format(DateTime(0, i + 1))),
-                        )),
+                      12,
+                          (i) => DropdownMenuItem(
+                        value: i + 1,
+                        child: Text(DateFormat.MMMM().format(DateTime(0, i + 1))),
+                      ),
+                    ),
                     onChanged: (val) => selectedStartMonth = val!,
                     decoration: InputDecoration(labelText: 'Start Month'),
                   ),
+                  SizedBox(height: 10),
                   DropdownButtonFormField<int>(
                     value: selectedEndMonth,
                     items: List.generate(
-                        12,
-                            (i) => DropdownMenuItem(
-                          value: i + 1,
-                          child: Text(
-                              DateFormat.MMMM().format(DateTime(0, i + 1))),
-                        )),
+                      12,
+                          (i) => DropdownMenuItem(
+                        value: i + 1,
+                        child: Text(DateFormat.MMMM().format(DateTime(0, i + 1))),
+                      ),
+                    ),
                     onChanged: (val) => selectedEndMonth = val!,
                     decoration: InputDecoration(labelText: 'End Month'),
                   ),
+                  SizedBox(height: 10),
                   TextFormField(
                     initialValue: selectedYear.toString(),
                     keyboardType: TextInputType.number,
@@ -97,10 +99,8 @@ class _OrderSalesPageState extends State<OrderSalesPage> {
                   onPressed: () {
                     Navigator.pop(context);
                     setState(() {
-                      startDate =
-                          DateTime(selectedYear, selectedStartMonth, 1);
-                      endDate = DateTime(
-                          selectedYear, selectedEndMonth + 1, 0); // end of month
+                      startDate = DateTime(selectedYear, selectedStartMonth, 1);
+                      endDate = DateTime(selectedYear, selectedEndMonth + 1, 0, 23, 59, 59);
                     });
                     generateReport();
                   },
@@ -127,9 +127,10 @@ class _OrderSalesPageState extends State<OrderSalesPage> {
                     initialValue: selectedStartYear.toString(),
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(labelText: 'Start Year'),
-                    onChanged: (val) => selectedStartYear =
-                        int.tryParse(val) ?? selectedStartYear,
+                    onChanged: (val) =>
+                    selectedStartYear = int.tryParse(val) ?? selectedStartYear,
                   ),
+                  SizedBox(height: 10),
                   TextFormField(
                     initialValue: selectedEndYear.toString(),
                     keyboardType: TextInputType.number,
@@ -145,7 +146,7 @@ class _OrderSalesPageState extends State<OrderSalesPage> {
                     Navigator.pop(context);
                     setState(() {
                       startDate = DateTime(selectedStartYear, 1, 1);
-                      endDate = DateTime(selectedEndYear, 12, 31);
+                      endDate = DateTime(selectedEndYear, 12, 31, 23, 59, 59);
                     });
                     generateReport();
                   },
@@ -171,7 +172,7 @@ class _OrderSalesPageState extends State<OrderSalesPage> {
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection('orders')
-          .where('deliveryStatus', isEqualTo: 'Placed')
+          .where('deliveryStatus', whereIn: ['Placed', 'Shipped'])
           .get();
 
       int serial = 1;
@@ -213,69 +214,60 @@ class _OrderSalesPageState extends State<OrderSalesPage> {
 
   Future<void> downloadReportAsPDF() async {
     final pdf = pw.Document();
-    final rupee = 'Rs.';
-    final format = DateFormat('dd-MM-yyyy');
-
-    final title = "AMSAM TEXTILES";
-    final subtitle =
-        "$reportType Report | ${format.format(startDate!)} to ${format.format(endDate!)}";
+    final format = DateFormat('dd MMM yyyy');
+    final start = startDate != null ? format.format(startDate!) : '';
+    final end = endDate != null ? format.format(endDate!) : '';
 
     pdf.addPage(
       pw.Page(
-        margin: pw.EdgeInsets.all(24),
         build: (pw.Context context) {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               pw.Center(
-                  child: pw.Text(title,
-                      style: pw.TextStyle(
-                          fontSize: 22, fontWeight: pw.FontWeight.bold))),
-              pw.SizedBox(height: 5),
-              pw.Center(
-                  child: pw.Text(subtitle,
-                      style: pw.TextStyle(
-                          fontSize: 14, fontStyle: pw.FontStyle.italic))),
-              pw.SizedBox(height: 15),
-              pw.Table.fromTextArray(
-                headers: ['S.No', 'Date', 'Product Name', 'Qty', 'Amount ($rupee)'],
-                data: reportData
-                    .map((e) => [
-                  e['serial'].toString(),
-                  e['date'],
-                  e['name'],
-                  e['quantity'].toString(),
-                  '$rupee${e['amount']}'
-                ])
-                    .toList(),
-                headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                cellAlignment: pw.Alignment.centerLeft,
+                child: pw.Text('AMSAM TEXTILES',
+                    style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold)),
               ),
               pw.SizedBox(height: 10),
-              pw.Align(
-                alignment: pw.Alignment.centerRight,
-                child: pw.Text('Grand Total: $rupee$grandTotal',
-                    style: pw.TextStyle(
-                        fontSize: 16, fontWeight: pw.FontWeight.bold)),
+              pw.Center(
+                child: pw.Text(
+                  '$reportType Report | $start - $end',
+                  style: pw.TextStyle(fontSize: 14),
+                ),
               ),
+              pw.SizedBox(height: 20),
+              pw.Table.fromTextArray(
+                headers: ['S.No', 'Date', 'Product Name', 'Qty', 'Amount'],
+                data: reportData.map((item) {
+                  return [
+                    item['serial'].toString(),
+                    item['date'],
+                    item['name'],
+                    item['quantity'].toString(),
+                    'Rs.${item['amount']}',
+                  ];
+                }).toList(),
+              ),
+              pw.SizedBox(height: 20),
+              pw.Text('Grand Total: ₹$grandTotal',
+                  style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
             ],
           );
         },
       ),
     );
 
-    final dir = await getTemporaryDirectory();
-    final file = File('${dir.path}/sales_report.pdf');
-    await file.writeAsBytes(await pdf.save());
+    final output = await getTemporaryDirectory();
+    final file = File("${output.path}/order_sales_report.pdf");
 
-    await OpenFile.open(file.path);
+    await file.writeAsBytes(await pdf.save());
+    OpenFile.open(file.path);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-      AppBar(title: Text('Total Sales Report'), backgroundColor: Colors.indigo),
+      appBar: AppBar(title: Text('Order Sales Report'), backgroundColor: Colors.indigo),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -286,8 +278,7 @@ class _OrderSalesPageState extends State<OrderSalesPage> {
                   child: DropdownButtonFormField<String>(
                     value: reportType,
                     items: reportTypes
-                        .map((type) =>
-                        DropdownMenuItem(value: type, child: Text(type)))
+                        .map((type) => DropdownMenuItem(value: type, child: Text(type)))
                         .toList(),
                     onChanged: (val) {
                       setState(() {
@@ -306,11 +297,9 @@ class _OrderSalesPageState extends State<OrderSalesPage> {
                 ElevatedButton.icon(
                   onPressed: selectInputRange,
                   icon: Icon(Icons.calendar_today, color: Colors.white),
-                  label:
-                  Text('Pick Range', style: TextStyle(color: Colors.white)),
-                  style:
-                  ElevatedButton.styleFrom(backgroundColor: Colors.indigo),
-                )
+                  label: Text('Pick Range', style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo),
+                ),
               ],
             ),
             SizedBox(height: 16),
@@ -319,40 +308,32 @@ class _OrderSalesPageState extends State<OrderSalesPage> {
                 'From ${DateFormat('dd MMM yyyy').format(startDate!)} to ${DateFormat('dd MMM yyyy').format(endDate!)}',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            SizedBox(height: 10),
+            SizedBox(height: 20),
             if (isLoading)
               Center(child: CircularProgressIndicator())
-            else if (reportData.isNotEmpty) ...[
+            else if (reportData.isNotEmpty)
               Expanded(
                 child: ListView.builder(
                   itemCount: reportData.length,
                   itemBuilder: (context, index) {
                     final item = reportData[index];
-                    return ListTile(
-                      leading: Text(item['serial'].toString()),
-                      title: Text(item['name']),
-                      subtitle: Text(
-                          'Date: ${item['date']} | Qty: ${item['quantity']}'),
-                      trailing: Text(
-                        '₹${item['amount']}',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                    return Card(
+                      child: ListTile(
+                        title: Text(item['name']),
+                        subtitle: Text('Qty: ${item['quantity']} - Amount: ₹${item['amount']}'),
+                        trailing: Text(item['date']),
                       ),
                     );
                   },
                 ),
               ),
-              SizedBox(height: 10),
-              Text('Grand Total: ₹$grandTotal',
-                  style: TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
-              ElevatedButton.icon(
-                onPressed: downloadReportAsPDF,
-                icon: Icon(Icons.download, color: Colors.white),
-                label: Text('Download PDF', style: TextStyle(color: Colors.white)),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo),
-              ),
-            ]
+            SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: downloadReportAsPDF,
+              icon: Icon(Icons.download, color: Colors.white),
+              label: Text('Download Report', style: TextStyle(color: Colors.white)),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo),
+            ),
           ],
         ),
       ),

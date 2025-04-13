@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +7,7 @@ import 'package:flutter/material.dart';
 class PaymentPage extends StatefulWidget {
   final Map<String, dynamic> address;
   final List<Map<String, dynamic>> cartItems;
-  final double totalAmount; // ✅ Total amount passed from AddressPage
+  final double totalAmount;
 
   const PaymentPage({
     Key? key,
@@ -36,7 +38,7 @@ class _PaymentPageState extends State<PaymentPage> {
     try {
       final orderId = FirebaseFirestore.instance.collection('orders').doc().id;
       final userId = user.uid;
-      final timestamp = DateTime.now(); // ✅ Using exact DateTime for sorting
+      final timestamp = DateTime.now();
       final cartIds = widget.cartItems.map((item) => item['cartItemId']).toList();
 
       Map<String, dynamic> productMap = {};
@@ -46,7 +48,6 @@ class _PaymentPageState extends State<PaymentPage> {
         final quantityOrdered = int.tryParse(item['quantity'].toString()) ?? 1;
         final price = double.tryParse(item['price'].toString()) ?? 0.0;
 
-        // Fetch product data from Firestore to check quantity
         final productDoc = await FirebaseFirestore.instance
             .collection('products')
             .doc(productId)
@@ -71,13 +72,11 @@ class _PaymentPageState extends State<PaymentPage> {
           return;
         }
 
-        // Update stock in products collection
         await FirebaseFirestore.instance
             .collection('products')
             .doc(productId)
             .update({'quantity': stockQty - quantityOrdered});
 
-        // Add to order productMap
         productMap[productId] = {
           'name': item['name'],
           'description': item['description'],
@@ -88,7 +87,6 @@ class _PaymentPageState extends State<PaymentPage> {
         };
       }
 
-      // Save order in Firestore
       await FirebaseFirestore.instance.collection('orders').doc(orderId).set({
         'orderId': orderId,
         'userId': userId,
@@ -96,14 +94,17 @@ class _PaymentPageState extends State<PaymentPage> {
         'products': productMap,
         'cartIds': cartIds,
         'totalAmount': widget.totalAmount.toStringAsFixed(2),
-        'timestamp': timestamp, // ✅ Save exact DateTime
-        'deliveryStatus': 'Placed', // ✅ Initial delivery status
+        'timestamp': timestamp,
+        'deliveryStatus': 'Placed',
       });
 
-      // Delete cart items
-      for (var item in widget.cartItems) {
-        final cartItemId = item['cartItemId'];
-        await FirebaseFirestore.instance.collection('cart').doc(cartItemId).delete();
+      final cartQuerySnapshot = await FirebaseFirestore.instance
+          .collection('cart')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      for (var cartDoc in cartQuerySnapshot.docs) {
+        await cartDoc.reference.delete();
       }
 
       setState(() => isPlacingOrder = false);
@@ -119,7 +120,6 @@ class _PaymentPageState extends State<PaymentPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,30 +130,60 @@ class _PaymentPageState extends State<PaymentPage> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: isPlacingOrder
-            ? const Center(child: CircularProgressIndicator(color: Colors.indigo))
+            ? const Center(child: CircularProgressIndicator(color: Colors.white))
             : Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Delivery Address",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            Text(
-              "${widget.address['name']},\n"
-                  "${widget.address['address']},\n"
-                  "${widget.address['city']} - ${widget.address['pincode']}",
-              style: const TextStyle(fontSize: 16),
+            const Text(
+              "Delivery Address",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.indigo),
+            ),
+            Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.address['name'],
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      "${widget.address['address']},\n${widget.address['city']} - ${widget.address['pincode']}",
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
             ),
             const SizedBox(height: 20),
-            const Text("Order Summary",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text(
+              "Order Summary",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.indigo),
+            ),
             Expanded(
               child: ListView.builder(
                 itemCount: widget.cartItems.length,
                 itemBuilder: (context, index) {
                   final item = widget.cartItems[index];
-                  return ListTile(
-                    title: Text(item['name']),
-                    subtitle: Text("Qty: ${item['quantity']}"),
-                    trailing: Text("₹${item['price']}"),
+                  return Card(
+                    elevation: 4,
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(12),
+                      leading: Image.memory(
+                        base64Decode(item['imageBase64']),
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                      ),
+                      title: Text(item['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: Text("Qty: ${item['quantity']} | ${item['color']}", style: const TextStyle(color: Colors.grey)),
+                      trailing: Text("₹${item['price']}", style: const TextStyle(color: Colors.indigo)),
+                    ),
                   );
                 },
               ),
@@ -161,21 +191,20 @@ class _PaymentPageState extends State<PaymentPage> {
             const SizedBox(height: 10),
             Text(
               "Total Amount: ₹${widget.totalAmount.toStringAsFixed(2)}",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.indigo),
             ),
             const SizedBox(height: 20),
             Center(
               child: ElevatedButton.icon(
-                icon: const Icon(Icons.check_circle),
-                label: const Text("Place Order"),
+                icon: const Icon(Icons.check_circle, color: Colors.white),
+                label: const Text("Place Order", style: TextStyle(color: Colors.white)),
                 onPressed: placeOrder,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.indigo,
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

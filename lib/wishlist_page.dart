@@ -51,7 +51,7 @@ class _WishlistPageState extends State<WishlistPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('${productData['name']} moved to cart.'),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.indigo,
       ),
     );
   }
