@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'orderinfo.dart';
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -37,7 +39,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.indigo,
         title: const Text('Profile'),
       ),
       body: Padding(
@@ -67,12 +69,22 @@ class _ProfilePageState extends State<ProfilePage> {
             Expanded(
               child: ListView(
                 children: [
-                  _buildListTile(Icons.headset_mic, 'Customer Care', () {}),
-                  _buildListTile(Icons.group_add, 'Invite Friends', () {}),
-                  _buildListTile(Icons.description, 'Terms and Conditions', () {}),
-                  _buildListTile(Icons.help, 'Help', () {}),
-                  _buildListTile(Icons.undo, 'How to Return Product', () {}),
-                  _buildListTile(Icons.card_giftcard, 'How to Redeem Coupon', () {}),
+                  _buildListTile(Icons.shopping_bag, 'Orders', () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const OrderInfoPage()),
+                    );
+                  }),
+
+                  _buildListTile(Icons.description, 'Terms and Conditions', () {
+                    // Navigate to terms and conditions page
+                  }),
+                  _buildListTile(Icons.help_outline, 'Help', () {
+                    // Navigate to help page
+                  }),
+                  _buildListTile(Icons.undo, 'How to Return Product', () {
+                    // Navigate to return policy/help
+                  }),
                   _buildListTile(Icons.exit_to_app, 'Sign Out', () async {
                     await FirebaseAuth.instance.signOut();
                     Navigator.pushReplacementNamed(context, '/login');
@@ -88,7 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildListTile(IconData icon, String title, VoidCallback onTap) {
     return ListTile(
-      leading: Icon(icon, color: Colors.teal),
+      leading: Icon(icon, color: Colors.indigo),
       title: Text(title),
       onTap: onTap,
     );
