@@ -9,6 +9,7 @@ import 'package:sample_app/reports_page.dart';
 import 'admin_orders.dart';
 import 'login.dart';
 import 'reports_page.dart';
+import 'sales_report.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -224,6 +225,12 @@ class _AdminPageState extends State<AdminPage> {
               title: Text('📊 Sales Insights', style: TextStyle(color: Colors.white)),
               onTap: () {
                 // TODO: Navigate to Sales Insights Page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SalesReportPage(),
+                  ),
+                );
               },
             ),
             ListTile(

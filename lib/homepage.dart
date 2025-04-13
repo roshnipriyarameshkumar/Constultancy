@@ -4,49 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:image_picker/image_picker.dart';
-import 'addtocart.dart';
+import 'cart_page.dart';
 import 'profile.dart';
-import 'ExplorePage.dart';
-import 'NotificationPage.dart';
-import 'WishlistPage.dart';
-import 'CategoriesPage.dart';
+import 'wishlist_page.dart';
 import 'login.dart';
-
-/// Top-level helper function to decode a base64 string and optionally decrypt it.
-/// For demonstration, decryption is done with a simple XOR using key 0xAA.
-Uint8List decodeAndDecryptImage(String? base64String, {bool decrypt = false}) {
-  if (base64String == null || base64String.isEmpty) {
-    return Uint8List(0);
-  }
-  try {
-    // Decode the base64 string.
-    Uint8List bytes = base64Decode(base64String);
-    if (decrypt) {
-      final int key = 0xAA; // Dummy XOR key for demonstration.
-      Uint8List decrypted = Uint8List(bytes.length);
-      for (int i = 0; i < bytes.length; i++) {
-        decrypted[i] = bytes[i] ^ key;
-      }
-      return decrypted;
-    }
-    return bytes;
-  } catch (e) {
-    print('Error decoding image: $e');
-    return Uint8List(0);
-  }
-}
-
-/// Top-level helper function to encrypt image bytes using a simple XOR with key 0xAA.
-/// This encryption is reversible and provided only for demonstration.
-Uint8List encryptImage(Uint8List imageBytes) {
-  final int key = 0xAA;
-  Uint8List encrypted = Uint8List(imageBytes.length);
-  for (int i = 0; i < imageBytes.length; i++) {
-    encrypted[i] = imageBytes[i] ^ key;
-  }
-  return encrypted;
-}
+import 'ProductDetailsPage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -59,11 +21,10 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
 
-  // Main pages of your application.
   final List<Widget> _pages = [
     HomePageBody(),
-    ExplorePage(),
-    CategoriesPage(),
+    WishlistPage(), // Redirect to Wishlist Page
+    CartPage(),     // Redirect to Cart Page
     ProfilePage(),
   ];
 
@@ -86,6 +47,82 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Side Drawer with Navigation Options
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(color: Colors.indigo),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.person, size: 40, color: Colors.indigo),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Welcome, User!',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text("Home"),
+              onTap: () {
+                Navigator.pop(context);
+                _onItemTapped(0);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text("Profile"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfilePage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.favorite),
+              title: const Text("Wishlist"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => WishlistPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.shopping_cart),
+              title: const Text("Cart"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CartPage()),
+                );
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text("Sign Out"),
+              onTap: () {
+                Navigator.pop(context);
+                _signOut();
+              },
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1,
@@ -106,7 +143,7 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AddToCartPage()),
+                MaterialPageRoute(builder: (context) => CartPage()),
               );
             },
             icon: const Icon(Icons.shopping_cart, color: Colors.black),
@@ -115,10 +152,10 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const NotificationsPage()),
+                MaterialPageRoute(builder: (context) => WishlistPage()),
               );
             },
-            icon: const Icon(Icons.notifications, color: Colors.black),
+            icon: const Icon(Icons.favorite_outline_rounded, color: Colors.black),
           ),
         ],
       ),
@@ -134,8 +171,10 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Explore'),
-          BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Categories'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.favorite_outlined), label: 'Wishlist'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_cart_outlined), label: 'Cart'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
         currentIndex: _selectedIndex,
@@ -144,16 +183,6 @@ class _HomePageState extends State<HomePage> {
         showUnselectedLabels: true,
         onTap: _onItemTapped,
       ),
-      // Floating action button redirects to the custom order page.
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.build),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const CustomOrderPage()),
-          );
-        },
-      ),
     );
   }
 }
@@ -161,23 +190,18 @@ class _HomePageState extends State<HomePage> {
 class HomePageBody extends StatelessWidget {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  /// Returns an image widget by decoding the base64 image stored in Firestore.
-  /// For custom orders, the image is stored in the 'design' field (with decryption);
-  /// for regular products, it is stored in the 'imageBase64' field.
-  Widget getProductImage(String? imageData, {bool isCustomOrder = false}) {
-    if (imageData == null || imageData.isEmpty) {
-      return const Center(child: Icon(Icons.image_not_supported));
-    }
-    // If the string is an asset reference:
-    if (imageData.startsWith('assets/')) {
-      return Image.asset(imageData, fit: BoxFit.cover);
-    }
+  /// Converts a base64 encoded string (possibly with a data prefix)
+  /// into a Uint8List image that can be displayed using Image.memory.
+  Uint8List _convertBase64ToImage(String base64String) {
     try {
-      // For regular products, no decryption is needed.
-      Uint8List imageBytes = decodeAndDecryptImage(imageData, decrypt: isCustomOrder);
-      return Image.memory(imageBytes, fit: BoxFit.cover);
+      // If there is a data URI scheme prefix, remove it.
+      if (base64String.contains(',')) {
+        base64String = base64String.split(',').last;
+      }
+      return base64Decode(base64String);
     } catch (e) {
-      return const Center(child: Icon(Icons.error));
+      print('Error converting base64 to image: $e');
+      return Uint8List(0);
     }
   }
 
@@ -187,12 +211,16 @@ class HomePageBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Carousel displaying asset images.
+          // Carousel Section
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 15),
             child: CarouselSlider(
-              items: ['assets/image1.jpg', 'assets/image2.jpg', 'assets/image3.jpg', 'assets/image4.jpg']
-                  .map((image) {
+              items: [
+                'assets/image1.jpg',
+                'assets/image2.jpg',
+                'assets/image3.jpg',
+                'assets/image4.jpg'
+              ].map((image) {
                 return Container(
                   margin: const EdgeInsets.symmetric(horizontal: 5),
                   decoration: BoxDecoration(
@@ -204,9 +232,14 @@ class HomePageBody extends StatelessWidget {
                   ),
                 );
               }).toList(),
-              options: CarouselOptions(height: 150, autoPlay: true, enlargeCenterPage: true),
+              options: CarouselOptions(
+                height: 150,
+                autoPlay: true,
+                enlargeCenterPage: true,
+              ),
             ),
           ),
+          // Trending Products Title
           const Padding(
             padding: EdgeInsets.all(10.0),
             child: Text(
@@ -214,15 +247,14 @@ class HomePageBody extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
-          // StreamBuilder to fetch products from Firestore.
+          // Products Grid
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance.collection('products').snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
               }
-              // Declare products locally from the snapshot data.
-              final products = snapshot.data!.docs;
+              var products = snapshot.data!.docs;
               return GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -234,39 +266,56 @@ class HomePageBody extends StatelessWidget {
                 ),
                 itemCount: products.length,
                 itemBuilder: (context, index) {
-                  final product = products[index].data() as Map<String, dynamic>;
+                  var product = products[index].data() as Map<String, dynamic>;
                   String productId = products[index].id;
-                  bool isCustomOrder = product['customOrder'] == true;
-                  // For custom orders, use the 'design' field with decryption;
-                  // for regular products, use the 'imageBase64' field.
-                  Uint8List imageBytes = isCustomOrder
-                      ? decodeAndDecryptImage(product['design'], decrypt: true)
-                      : decodeAndDecryptImage(product['imageBase64'], decrypt: false);
+                  Uint8List imageBytes = Uint8List(0);
+                  // Use the base64 conversion if the field exists
+                  if (product['imageBase64'] != null) {
+                    imageBytes = _convertBase64ToImage(product['imageBase64']);
+                  }
 
                   return InkWell(
                     onTap: () {
-                      // Navigate to ProductDetailsPage when a product is tapped.
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => ProductDetailsPage(
                             productId: productId,
-                            product: product,
+                            productData: product ?? {}, // Ensure productData is not null
                           ),
                         ),
                       );
+
                     },
                     child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       margin: const EdgeInsets.all(10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Product image container with fallback default image
                           Container(
                             height: 120,
-                            child: imageBytes.isNotEmpty
-                                ? Image.memory(imageBytes, fit: BoxFit.cover)
-                                : const Center(child: CircularProgressIndicator()),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
+                              ),
+                              color: Colors.grey[200],
+                              image: DecorationImage(
+                                image: imageBytes.isNotEmpty
+                                    ? MemoryImage(imageBytes)
+                                    : const AssetImage('assets/default_product.jpg')
+                                as ImageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
+                          // Product details
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
@@ -274,12 +323,18 @@ class HomePageBody extends StatelessWidget {
                               children: [
                                 Text(
                                   product['name'] ?? 'Unknown',
-                                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
                                   '₹${product['price'] ?? '0'}',
-                                  style: const TextStyle(fontSize: 14, color: Colors.indigo),
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.indigo,
+                                  ),
                                 ),
                               ],
                             ),
@@ -293,218 +348,6 @@ class HomePageBody extends StatelessWidget {
             },
           ),
         ],
-      ),
-    );
-  }
-}
-
-class ProductDetailsPage extends StatelessWidget {
-  final String productId;
-  final Map<String, dynamic> product;
-
-  const ProductDetailsPage({Key? key, required this.productId, required this.product}) : super(key: key);
-
-  /// Returns an image widget by decoding the base64 image.
-  /// For custom orders, it uses the 'design' field; otherwise, it uses the 'imageBase64' field.
-  Widget getProductImage(String? imageData, {bool isCustomOrder = false}) {
-    if (imageData == null || imageData.isEmpty) {
-      return const Center(child: Icon(Icons.image_not_supported));
-    }
-    if (imageData.startsWith('assets/')) {
-      return Image.asset(imageData, fit: BoxFit.cover);
-    }
-    try {
-      Uint8List imageBytes = decodeAndDecryptImage(imageData, decrypt: isCustomOrder);
-      return Image.memory(imageBytes, fit: BoxFit.cover);
-    } catch (e) {
-      return const Center(child: Icon(Icons.error));
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    bool isCustomOrder = product['customOrder'] == true;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(product['name'] ?? 'Product Details'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 200,
-              child: isCustomOrder
-                  ? getProductImage(product['design'], isCustomOrder: true)
-                  : getProductImage(product['imageBase64'], isCustomOrder: false),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              product['name'] ?? 'Unknown',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Price: ₹${product['price'] ?? '0'}',
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 16),
-            Text(product['description'] ?? 'No description available.'),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class CustomOrderPage extends StatefulWidget {
-  const CustomOrderPage({Key? key}) : super(key: key);
-
-  @override
-  _CustomOrderPageState createState() => _CustomOrderPageState();
-}
-
-class _CustomOrderPageState extends State<CustomOrderPage> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _productNameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _sizeController = TextEditingController();
-  final TextEditingController _quantityController = TextEditingController();
-  final TextEditingController _colorController = TextEditingController();
-  Uint8List? _designImageBytes;
-
-  final ImagePicker _picker = ImagePicker();
-
-  Future<void> _pickDesignImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      Uint8List imageBytes = await pickedFile.readAsBytes();
-      setState(() {
-        _designImageBytes = imageBytes;
-      });
-    }
-  }
-
-  Uint8List encryptAndCompressImage(Uint8List imageBytes) {
-    // Encrypt the image using the helper function.
-    return encryptImage(imageBytes);
-  }
-
-  Future<void> _submitCustomOrder() async {
-    if (!_formKey.currentState!.validate()) return;
-    if (_designImageBytes == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please upload a design image.')),
-      );
-      return;
-    }
-
-    // Encrypt the design image.
-    Uint8List encryptedImage = encryptAndCompressImage(_designImageBytes!);
-
-    // Prepare custom order data.
-    Map<String, dynamic> customOrderData = {
-      'productName': _productNameController.text,
-      'description': _descriptionController.text,
-      'size': _sizeController.text,
-      'quantity': _quantityController.text,
-      'color': _colorController.text,
-      // Store the encrypted image as a base64-encoded string.
-      'design': base64Encode(encryptedImage),
-      'customOrder': true,
-      'timestamp': FieldValue.serverTimestamp(),
-    };
-
-    String userId = FirebaseAuth.instance.currentUser!.uid;
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('cart')
-        .add(customOrderData);
-
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Custom order added to cart!')),
-    );
-  }
-
-  @override
-  void dispose() {
-    _productNameController.dispose();
-    _descriptionController.dispose();
-    _sizeController.dispose();
-    _quantityController.dispose();
-    _colorController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Custom Order'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              const Text(
-                'Customize Your Product',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _productNameController,
-                decoration: const InputDecoration(labelText: 'Product Name'),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter a product name'
-                    : null,
-              ),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(labelText: 'Description'),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter a description'
-                    : null,
-              ),
-              TextFormField(
-                controller: _sizeController,
-                decoration: const InputDecoration(labelText: 'Size'),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter a size'
-                    : null,
-              ),
-              TextFormField(
-                controller: _quantityController,
-                decoration: const InputDecoration(labelText: 'Quantity'),
-                keyboardType: TextInputType.number,
-                validator: (value) =>
-                value == null || value.isEmpty ? 'Please enter quantity' : null,
-              ),
-              TextFormField(
-                controller: _colorController,
-                decoration: const InputDecoration(labelText: 'Color'),
-                validator: (value) =>
-                value == null || value.isEmpty ? 'Please enter a color' : null,
-              ),
-              const SizedBox(height: 16),
-              _designImageBytes != null
-                  ? Image.memory(_designImageBytes!, height: 150)
-                  : const Text('No design image selected.'),
-              ElevatedButton(
-                onPressed: _pickDesignImage,
-                child: const Text('Upload Design'),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _submitCustomOrder,
-                child: const Text('Submit Custom Order'),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
