@@ -71,10 +71,10 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.symmetric(vertical: 15),
               child: CarouselSlider(
                 items: [
-                  'assets/image3.jpeg',
-                  'assets/image4.avif',
-                  'assets/image5.avif',
-                  'assets/image6.avif'
+                  'assets/image4.jpeg',
+                  'assets/images1.jpeg',
+                  'assets/image4.jpeg',
+                  'assets/images1.jpeg'
                 ].map((image) {
                   return Container(
                     margin: const EdgeInsets.symmetric(horizontal: 5),
