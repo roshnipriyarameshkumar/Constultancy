@@ -107,7 +107,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     }
   }
 
-
   Future<void> addToWishlist() async {
     if (auth.currentUser == null || productData == null) return;
 
@@ -149,7 +148,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -168,44 +166,44 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(productData!['name'] ?? 'Product Details'),
+        title: Text(productData!['name'] ?? 'Product Details', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.indigo,
+        elevation: 4.0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
           children: [
             Center(
               child: Container(
-                width: 200,
-                height: 200,
+                width: 250,
+                height: 250,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(15),
                   border: Border.all(color: Colors.indigo, width: 2),
                 ),
                 child: imageBytes != null
                     ? ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(15),
                   child: Image.memory(imageBytes, fit: BoxFit.cover),
                 )
-                    : const Icon(Icons.image, size: 80, color: Colors.grey),
+                    : const Icon(Icons.image, size: 100, color: Colors.grey),
               ),
             ),
             const SizedBox(height: 20),
             Text(
               productData!['name'] ?? 'Unknown',
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.indigo),
             ),
             const SizedBox(height: 8),
             Text(
-              "Price: ₹${productData!['price'] ?? 'N/A'}",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.indigo),
+              "₹${productData!['price'] ?? 'N/A'}",
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.indigo),
             ),
             const SizedBox(height: 8),
             Text(
-              "Description: ${productData!['description'] ?? 'No description'}",
-              style: const TextStyle(fontSize: 16),
+              "Description: ${productData!['description'] ?? 'No description available.'}",
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
             ),
             const SizedBox(height: 8),
             Text(
@@ -220,14 +218,26 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   onPressed: addToCart,
                   icon: const Icon(Icons.shopping_cart),
                   label: const Text("Add to Cart"),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.indigo,  // Corrected primary to backgroundColor
+                    foregroundColor: Colors.white,  // Corrected onPrimary to foregroundColor
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  ),
                 ),
+
                 ElevatedButton.icon(
                   onPressed: addToWishlist,
                   icon: const Icon(Icons.favorite),
-                  label: const Text("Wishlist"),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo),
+                  label: const Text("Add to Wishlist"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.indigo,  // Corrected primary to backgroundColor
+                    foregroundColor: Colors.white,  // Corrected onPrimary to foregroundColor
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  ),
                 ),
+
               ],
             ),
           ],

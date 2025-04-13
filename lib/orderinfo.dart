@@ -61,7 +61,7 @@ class OrderInfoPage extends StatelessWidget {
           TextButton(
             child: const Text("Yes", style: TextStyle(color: Colors.red)),
             onPressed: () async {
-              Navigator.pop(context); // Close dialog
+              Navigator.pop(context);
               await deleteOrder(context, orderId);
             },
           ),
@@ -73,6 +73,12 @@ class OrderInfoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userId = FirebaseAuth.instance.currentUser?.uid;
+
+    if (userId == null) {
+      return const Scaffold(
+        body: Center(child: Text("Please log in to view your orders.")),
+      );
+    }
 
     return Scaffold(
       backgroundColor: Colors.indigo,
@@ -113,9 +119,21 @@ class OrderInfoPage extends StatelessWidget {
               final order = sortedOrders[index];
               final data = order.data() as Map<String, dynamic>;
               final status = data['deliveryStatus']?.toString() ?? "Placed";
-              final products = data['products'] as Map<String, dynamic>? ?? {};
-              final totalAmount = data['totalAmount'] ?? 0;
-              final orderId = order.id; // Firestore document ID
+              final orderId = order.id;
+
+              final Map<String, dynamic> productsMap =
+              (data['products'] as Map<String, dynamic>? ?? {});
+
+              final productList = productsMap.entries.map((entry) {
+                final product = entry.value as Map<String, dynamic>;
+                return {
+                  'name': product['name'] ?? '',
+                  'quantity': product['quantity'] ?? 1,
+                  'price': product['price']?.toString() ?? '0',
+                };
+              }).toList();
+
+              final totalAmount = data['totalAmount']?.toString() ?? '0';
 
               return Card(
                 color: Colors.white,
@@ -133,20 +151,19 @@ class OrderInfoPage extends StatelessWidget {
                       const Divider(height: 20, thickness: 1),
                       const Text("Products:", style: TextStyle(fontWeight: FontWeight.bold)),
                       const SizedBox(height: 6),
-                      ...products.entries.map((entry) {
-                        final product = entry.value;
+                      ...productList.map((product) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(child: Text(product['name'] ?? "Product")),
+                              Expanded(child: Text(product['name'])),
                               Text("Qty: ${product['quantity']}"),
                               Text("₹${product['price']}"),
                             ],
                           ),
                         );
-                      }),
+                      }).toList(),
                       const SizedBox(height: 12),
                       const Text("Delivery Status:", style: TextStyle(fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),

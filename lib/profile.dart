@@ -72,8 +72,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   _buildListTile(Icons.shopping_bag, 'Orders', () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const OrderInfoPage()),
+                      MaterialPageRoute(
+                        builder: (context) => OrderInfoPage(),
+                      ),
                     );
+
                   }),
 
                   _buildListTile(Icons.description, 'Terms and Conditions', () {
