@@ -106,7 +106,7 @@ class _SignupPageState extends State<SignupPage> {
       appBar: AppBar(
         title: const Text('Amsam Tex'),
         centerTitle: true,
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.indigo,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -120,7 +120,7 @@ class _SignupPageState extends State<SignupPage> {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.teal,
+                  color: Colors.indigo,
                 ),
               ),
               const SizedBox(height: 10),
@@ -148,7 +148,7 @@ class _SignupPageState extends State<SignupPage> {
                 onPressed: _signup,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                  backgroundColor: Colors.teal,
+                  backgroundColor: Colors.indigo,
                   elevation: 5,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -173,7 +173,7 @@ class _SignupPageState extends State<SignupPage> {
                 },
                 child: const Text(
                   'Already have an account? Login',
-                  style: TextStyle(fontSize: 16, color: Colors.teal),
+                  style: TextStyle(fontSize: 16, color: Colors.indigo),
                 ),
               ),
             ],

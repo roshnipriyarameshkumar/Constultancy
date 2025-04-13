@@ -129,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         title: const Text('Login to Amsam Tex'),
         centerTitle: true,
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.indigo,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -143,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.teal,
+                  color: Colors.indigo,
                 ),
               ),
               const SizedBox(height: 10),
@@ -188,7 +188,7 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   child: const Text(
                     'Forgot Password?',
-                    style: TextStyle(fontSize: 16, color: Colors.teal),
+                    style: TextStyle(fontSize: 16, color: Colors.indigo),
                   ),
                 ),
               ),
@@ -197,7 +197,7 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: _login,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                  backgroundColor: Colors.teal,
+                  backgroundColor: Colors.indigo,
                   elevation: 5,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -222,7 +222,7 @@ class _LoginPageState extends State<LoginPage> {
                 },
                 child: const Text(
                   'Don’t have an account? Sign Up',
-                  style: TextStyle(fontSize: 16, color: Colors.teal),
+                  style: TextStyle(fontSize: 16, color: Colors.indigo),
                 ),
               ),
             ],
