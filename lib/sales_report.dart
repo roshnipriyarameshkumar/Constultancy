@@ -7,6 +7,7 @@ class SalesReportPage extends StatefulWidget {
 
   @override
   State<SalesReportPage> createState() => _SalesReportPageState();
+
 }
 
 class _SalesReportPageState extends State<SalesReportPage> {
