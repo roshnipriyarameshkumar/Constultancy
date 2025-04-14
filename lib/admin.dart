@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:sample_app/reports_page.dart';
 import 'package:sample_app/restore_alert_page.dart';
+import 'package:sample_app/supplier_admin_page.dart';
 import 'package:sample_app/user_logs_page.dart';
 import 'admin_add_offer.dart';
 import 'admin_orders.dart';
@@ -266,6 +267,16 @@ class _AdminPageState extends State<AdminPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const InventoryManagementPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.local_shipping, color: Colors.white),
+              title: Text('Supplier Management', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SupplierAdminPage()),
                 );
               },
             ),
