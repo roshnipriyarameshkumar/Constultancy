@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:sample_app/Help_page.dart';
+import 'package:sample_app/terms_conditions.dart';
 
 import 'orderinfo.dart';
 
@@ -80,14 +82,21 @@ class _ProfilePageState extends State<ProfilePage> {
                   }),
 
                   _buildListTile(Icons.description, 'Terms and Conditions', () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>  const TermsAndConditions()),
+                    );
+
                     // Navigate to terms and conditions page
                   }),
                   _buildListTile(Icons.help_outline, 'Help', () {
-                    // Navigate to help page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HelpPage()),
+                    );
                   }),
-                  _buildListTile(Icons.undo, 'How to Return Product', () {
-                    // Navigate to return policy/help
-                  }),
+
+
                   _buildListTile(Icons.exit_to_app, 'Sign Out', () async {
                     await FirebaseAuth.instance.signOut();
                     Navigator.pushReplacementNamed(context, '/login');
