@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'CustomOrderPage.dart';
 import 'cart_page.dart';
 import 'notification_page.dart';
 import 'offers_page.dart';
@@ -12,6 +13,7 @@ import 'profile.dart';
 import 'wishlist_page.dart';
 import 'login.dart';
 import 'ProductDetailsPage.dart';
+//import 'CustomOrderPage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -30,6 +32,7 @@ class _HomePageState extends State<HomePage> {
     WishlistPage(),
     CartPage(),
     ProfilePage(),
+    CustomOrderPage()
   ];
 
   void _onItemTapped(int index) {
@@ -372,6 +375,7 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
               icon: Icon(Icons.shopping_cart_outlined), label: 'Cart'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'Custom order')
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.indigo,
