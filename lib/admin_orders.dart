@@ -10,6 +10,10 @@ class AdminOrdersPage extends StatelessWidget {
     });
   }
 
+  bool isCustomOrder(Map<String, dynamic> products) {
+    return products.values.any((product) => product['type'] == 'custom');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,6 +33,7 @@ class AdminOrdersPage extends StatelessWidget {
               final userId = order['userId'];
               final status = order['deliveryStatus'] ?? "Placed";
               final products = order['products'] as Map<String, dynamic>;
+              final isCustom = isCustomOrder(products);
 
               return Card(
                 margin: const EdgeInsets.all(10),
@@ -37,7 +42,24 @@ class AdminOrdersPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Order ID: $orderId", style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Order ID: $orderId", style: const TextStyle(fontWeight: FontWeight.bold)),
+                          if (isCustom)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.orangeAccent,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Text(
+                                "Custom Order",
+                                style: TextStyle(color: Colors.white, fontSize: 12),
+                              ),
+                            ),
+                        ],
+                      ),
                       Text("User ID: $userId"),
                       Text("Total Amount: ₹${order['totalAmount']}"),
                       const SizedBox(height: 6),
@@ -46,7 +68,7 @@ class AdminOrdersPage extends StatelessWidget {
                         final product = entry.value;
                         return ListTile(
                           title: Text(product['name']),
-                          subtitle: Text("Product ID: ${entry.key}, Qty: ${product['quantity']}"),
+                          subtitle: Text("Product ID: ${entry.key}, Qty: ${product['quantity']}${product['type'] == 'custom' ? ' (Custom)' : ''}"),
                         );
                       }),
                       const SizedBox(height: 10),

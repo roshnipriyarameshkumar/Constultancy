@@ -23,6 +23,10 @@ class PaymentPage extends StatefulWidget {
 class _PaymentPageState extends State<PaymentPage> {
   bool isPlacingOrder = false;
 
+  bool hasCustomProduct() {
+    return widget.cartItems.any((item) => item['type'] == 'custom');
+  }
+
   Future<void> placeOrder() async {
     setState(() => isPlacingOrder = true);
     final user = FirebaseAuth.instance.currentUser;
@@ -40,50 +44,57 @@ class _PaymentPageState extends State<PaymentPage> {
       final userId = user.uid;
       final timestamp = DateTime.now();
       final cartIds = widget.cartItems.map((item) => item['cartItemId']).toList();
+      final paymentMethod = hasCustomProduct() ? 'Cash on Delivery' : 'Other'; // Enforce COD for custom
 
       Map<String, dynamic> productMap = {};
 
       for (var item in widget.cartItems) {
-        final productId = item['productId'];
+        final productId = item['productId']; // Assuming 'productId' exists for regular products
         final quantityOrdered = int.tryParse(item['quantity'].toString()) ?? 1;
         final price = double.tryParse(item['price'].toString()) ?? 0.0;
 
-        final productDoc = await FirebaseFirestore.instance
-            .collection('products')
-            .doc(productId)
-            .get();
+        // For custom products, we don't need to check stock
+        if (item['type'] != 'custom') {
+          final productDoc = await FirebaseFirestore.instance
+              .collection('products')
+              .doc(productId)
+              .get();
 
-        if (!productDoc.exists) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Product ${item['name']} not found.")),
-          );
-          setState(() => isPlacingOrder = false);
-          return;
+          if (!productDoc.exists) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Product ${item['name']} not found.")),
+            );
+            setState(() => isPlacingOrder = false);
+            return;
+          }
+
+          final productData = productDoc.data()!;
+          final stockQty = int.tryParse(productData['quantity'].toString()) ?? 0;
+
+          if (stockQty < quantityOrdered) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Not enough stock for ${item['name']}.")),
+            );
+            setState(() => isPlacingOrder = false);
+            return;
+          }
+
+          await FirebaseFirestore.instance
+              .collection('products')
+              .doc(productId)
+              .update({'quantity': stockQty - quantityOrdered});
         }
 
-        final productData = productDoc.data()!;
-        final stockQty = int.tryParse(productData['quantity'].toString()) ?? 0;
-
-        if (stockQty < quantityOrdered) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Not enough stock for ${item['name']}.")),
-          );
-          setState(() => isPlacingOrder = false);
-          return;
-        }
-
-        await FirebaseFirestore.instance
-            .collection('products')
-            .doc(productId)
-            .update({'quantity': stockQty - quantityOrdered});
-
-        productMap[productId] = {
+        productMap[item['id']] = { // Use cart item ID for custom products as they might not have a 'productId'
           'name': item['name'],
           'description': item['description'],
           'price': price,
           'quantity': quantityOrdered,
           'color': item['color'],
           'imageBase64': item['imageBase64'],
+          'type': item['type'],
+          if (item['size'] != null) 'size': item['size'],
+          if (item['description'] != null) 'customDescription': item['description'], // To avoid conflict with general 'description'
         };
       }
 
@@ -96,6 +107,7 @@ class _PaymentPageState extends State<PaymentPage> {
         'totalAmount': widget.totalAmount.toStringAsFixed(2),
         'timestamp': timestamp,
         'deliveryStatus': 'Placed',
+        'paymentMethod': paymentMethod,
       });
 
       final cartQuerySnapshot = await FirebaseFirestore.instance
@@ -109,7 +121,7 @@ class _PaymentPageState extends State<PaymentPage> {
 
       setState(() => isPlacingOrder = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Order placed successfully!")),
+        const SnackBar(content: Text("Order placed successfully! (Cash on Delivery)")),
       );
       Navigator.popUntil(context, (route) => route.isFirst);
     } catch (e) {
@@ -181,7 +193,10 @@ class _PaymentPageState extends State<PaymentPage> {
                         fit: BoxFit.cover,
                       ),
                       title: Text(item['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text("Qty: ${item['quantity']} | ${item['color']}", style: const TextStyle(color: Colors.grey)),
+                      subtitle: Text(
+                        "Qty: ${item['quantity']} | ${item['color']}${item['size'] != null ? ' | Size: ${item['size']}' : ''}",
+                        style: const TextStyle(color: Colors.grey),
+                      ),
                       trailing: Text("₹${item['price']}", style: const TextStyle(color: Colors.indigo)),
                     ),
                   );
@@ -196,8 +211,11 @@ class _PaymentPageState extends State<PaymentPage> {
             const SizedBox(height: 20),
             Center(
               child: ElevatedButton.icon(
-                icon: const Icon(Icons.check_circle, color: Colors.white),
-                label: const Text("Place Order", style: TextStyle(color: Colors.white)),
+                icon: const Icon(Icons.money, color: Colors.white),
+                label: Text(
+                  hasCustomProduct() ? "Place Order (Cash on Delivery)" : "Place Order",
+                  style: const TextStyle(color: Colors.white),
+                ),
                 onPressed: placeOrder,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.indigo,

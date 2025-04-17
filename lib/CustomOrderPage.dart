@@ -58,48 +58,41 @@ class _CustomOrderPageState extends State<CustomOrderPage> {
 
     try {
       final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) throw Exception("User not logged in");
 
-      if (userId == null) {
-        throw Exception("User not logged in");
-      }
-
-      final data = {
-        'productName': _nameController.text.trim(),
+      final cartData = {
+        'name': _nameController.text.trim(),
         'description': _descController.text.trim(),
         'size': _sizeController.text.trim(),
         'color': _colorController.text.trim(),
         'imageBase64': _imageBase64,
+        'quantity': 1,
+        'type': 'custom', // Mark as custom product
         'timestamp': Timestamp.now(),
         'userId': userId,
       };
 
-      // 1. Add to customorder collection
-      final customOrderRef = await FirebaseFirestore.instance
-          .collection('customorder')
-          .add(data);
-
-      // 2. Add to user's cart
+      // Add the custom order details directly to the 'cart' collection
       await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
           .collection('cart')
-          .doc(customOrderRef.id)
-          .set({
-        'productId': customOrderRef.id,
-        'productName': data['productName'],
-        'description': data['description'],
-        'size': data['size'],
-        'color': data['color'],
-        'imageBase64': data['imageBase64'],
-        'quantity': 1,
-        'isCustom': true,
-        'timestamp': Timestamp.now(),
-      });
+          .add(cartData);
 
       setState(() => _isSubmitting = false);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Custom order placed and added to cart!")),
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text("Order Submitted"),
+          content: const Text("Custom order has been placed and added to your cart!"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("OK"),
+            )
+          ],
+        ),
       );
 
       _formKey.currentState?.reset();
@@ -115,6 +108,21 @@ class _CustomOrderPageState extends State<CustomOrderPage> {
     }
   }
 
+  Widget _buildTextField(
+      {required TextEditingController controller,
+        required String label,
+        int maxLines = 1}) {
+    return TextFormField(
+      controller: controller,
+      maxLines: maxLines,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
+      validator: (val) => val == null || val.isEmpty ? "Required" : null,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,58 +135,36 @@ class _CustomOrderPageState extends State<CustomOrderPage> {
         child: Form(
           key: _formKey,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                "This is a custom order page. Customers can place orders based on their own design requirements.",
+                "This is a custom order page. Fill in the details below.",
                 style: TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 20),
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: "Product Name",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (val) => val == null || val.isEmpty ? "Required" : null,
-              ),
+              _buildTextField(controller: _nameController, label: "Product Name"),
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _descController,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: "Description",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (val) => val == null || val.isEmpty ? "Required" : null,
-              ),
+              _buildTextField(
+                  controller: _descController,
+                  label: "Description",
+                  maxLines: 3),
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _sizeController,
-                decoration: const InputDecoration(
-                  labelText: "Size",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (val) => val == null || val.isEmpty ? "Required" : null,
+              Row(
+                children: [
+                  Expanded(child: _buildTextField(controller: _sizeController, label: "Size")),
+                  const SizedBox(width: 10),
+                  Expanded(child: _buildTextField(controller: _colorController, label: "Color")),
+                ],
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _colorController,
-                decoration: const InputDecoration(
-                  labelText: "Color",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (val) => val == null || val.isEmpty ? "Required" : null,
-              ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               ElevatedButton.icon(
                 icon: const Icon(Icons.image),
                 onPressed: _pickImage,
-                label: const Text("Pick Product Image"),
+                label: const Text("Upload Image"),
               ),
-              const SizedBox(height: 10),
-              if (_imageFile != null)
+              if (_imageFile != null) ...[
+                const SizedBox(height: 10),
                 Image.file(_imageFile!, height: 150, fit: BoxFit.cover),
+              ],
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
@@ -189,7 +175,7 @@ class _CustomOrderPageState extends State<CustomOrderPage> {
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text("Submit Custom Order"),
                 ),
-              )
+              ),
             ],
           ),
         ),

@@ -61,7 +61,7 @@ class _CartPageState extends State<CartPage> {
           onPressed: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) =>  const HomePage()),
+              MaterialPageRoute(builder: (context) => const HomePage()),
             );
           },
         ),
@@ -71,7 +71,7 @@ class _CartPageState extends State<CartPage> {
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('cart')
-              .where('userId', isEqualTo: userId)
+              .where('userId', isEqualTo: userId) // Filter by current user ID
               .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
@@ -108,6 +108,7 @@ class _CartPageState extends State<CartPage> {
                       int quantity = data['quantity'] ?? 1;
                       double itemTotalPrice = price * quantity;
                       Uint8List? imageBytes = decodeImage(data['imageBase64']);
+                      String? type = data['type']; // Get the 'type' field
 
                       return Card(
                         margin: const EdgeInsets.all(10),
@@ -116,24 +117,44 @@ class _CartPageState extends State<CartPage> {
                           padding: const EdgeInsets.all(10),
                           child: Row(
                             children: [
-                              Container(
-                                width: 80,
-                                height: 80,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey.shade300),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: imageBytes != null
-                                    ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.memory(
-                                    imageBytes,
+                              Stack(
+                                children: [
+                                  Container(
                                     width: 80,
                                     height: 80,
-                                    fit: BoxFit.cover,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: imageBytes != null
+                                        ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.memory(
+                                        imageBytes,
+                                        width: 80,
+                                        height: 80,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                        : const Icon(Icons.image, size: 50, color: Colors.grey),
                                   ),
-                                )
-                                    : const Icon(Icons.image, size: 50, color: Colors.grey),
+                                  if (type == 'custom') // Display badge if type is 'custom'
+                                    Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          color: Colors.orange,
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: const Text(
+                                          'Custom',
+                                          style: TextStyle(color: Colors.white, fontSize: 10),
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                               const SizedBox(width: 10),
                               Expanded(
@@ -142,7 +163,15 @@ class _CartPageState extends State<CartPage> {
                                   children: [
                                     Text(productName, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                                     Text("₹${price.toStringAsFixed(2)}", style: const TextStyle(fontSize: 14, color: Colors.indigo)),
-                                    Text("Color: $color", style: const TextStyle(fontSize: 12)),
+                                    if (type == 'custom') ...[
+                                      Text("Color: $color", style: const TextStyle(fontSize: 12)),
+                                      if (data['size'] != null)
+                                        Text("Size: ${data['size']}", style: const TextStyle(fontSize: 12)),
+                                      if (data['description'] != null)
+                                        Text("Description: ${data['description']}", style: const TextStyle(fontSize: 12)),
+                                    ] else ...[
+                                      Text("Color: $color", style: const TextStyle(fontSize: 12)),
+                                    ],
                                     const SizedBox(height: 5),
                                     Row(
                                       children: [
@@ -205,8 +234,6 @@ class _CartPageState extends State<CartPage> {
                               ),
                             );
                           },
-
-
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.indigo,
                             padding: const EdgeInsets.symmetric(vertical: 12),
