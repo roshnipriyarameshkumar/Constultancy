@@ -8,17 +8,16 @@ import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
 
-class TotalSalesPage extends StatefulWidget {
+class ReviewReportPage extends StatefulWidget {
   @override
-  _TotalSalesPageState createState() => _TotalSalesPageState();
+  _ReviewReportPageState createState() => _ReviewReportPageState();
 }
 
-class _TotalSalesPageState extends State<TotalSalesPage> {
+class _ReviewReportPageState extends State<ReviewReportPage> {
   String reportType = 'Day Wise';
   DateTime? startDate;
   DateTime? endDate;
   List<Map<String, dynamic>> reportData = [];
-  num grandTotal = 0;
   bool isLoading = false;
 
   final List<String> reportTypes = [
@@ -28,6 +27,7 @@ class _TotalSalesPageState extends State<TotalSalesPage> {
     'Year Wise'
   ];
 
+  // Function to select input range (dates or month/year range)
   Future<void> selectInputRange() async {
     switch (reportType) {
       case 'Day Wise':
@@ -65,9 +65,8 @@ class _TotalSalesPageState extends State<TotalSalesPage> {
                         items: List.generate(
                           12,
                               (i) => DropdownMenuItem(
-                            value: i + 1,
-                            child: Text(DateFormat.MMMM().format(DateTime(0, i + 1))),
-                          ),
+                              value: i + 1,
+                              child: Text(DateFormat.MMMM().format(DateTime(0, i + 1)))),
                         ),
                         onChanged: (val) => setStateDialog(() => selectedStartMonth = val!),
                         decoration: InputDecoration(labelText: 'Start Month'),
@@ -78,9 +77,8 @@ class _TotalSalesPageState extends State<TotalSalesPage> {
                         items: List.generate(
                           12,
                               (i) => DropdownMenuItem(
-                            value: i + 1,
-                            child: Text(DateFormat.MMMM().format(DateTime(0, i + 1))),
-                          ),
+                              value: i + 1,
+                              child: Text(DateFormat.MMMM().format(DateTime(0, i + 1)))),
                         ),
                         onChanged: (val) => setStateDialog(() => selectedEndMonth = val!),
                         decoration: InputDecoration(labelText: 'End Month'),
@@ -166,19 +164,18 @@ class _TotalSalesPageState extends State<TotalSalesPage> {
     }
   }
 
+  // Function to generate the report from Firestore data
   Future<void> generateReport() async {
     if (startDate == null || endDate == null) return;
 
     setState(() {
       isLoading = true;
       reportData.clear();
-      grandTotal = 0;
     });
 
     try {
       final snapshot = await FirebaseFirestore.instance
-          .collection('orders')
-          .where('deliveryStatus', isEqualTo: 'Delivered')
+          .collection('reviews')
           .get();
 
       int serial = 1;
@@ -186,28 +183,23 @@ class _TotalSalesPageState extends State<TotalSalesPage> {
 
       for (var doc in snapshot.docs) {
         final data = doc.data();
-        final time = (data['timestamp'] as Timestamp?)?.toDate();
+        final timestamp = (data['timestamp'] as Timestamp?)?.toDate();
 
-        if (time == null || time.isBefore(startDate!) || time.isAfter(endDate!)) continue;
+        if (timestamp == null || timestamp.isBefore(startDate!) || timestamp.isAfter(endDate!)) continue;
 
-        final products = Map<String, dynamic>.from(data['products'] ?? {});
-        for (var entry in products.entries) {
-          final product = entry.value;
-          final name = product['name'] ?? 'N/A';
-          final qty = int.tryParse(product['quantity'].toString()) ?? 0;
-          final price = num.tryParse(product['price'].toString()) ?? 0;
-          final amount = qty * price;
+        final productId = data['productId'] ?? 'N/A';
+        final productName = data['productName'] ?? 'N/A';
+        final rating = data['rating'] ?? 0;
+        final review = data['review'] ?? 'No review';
 
-          reportData.add({
-            'serial': serial++,
-            'date': format.format(time),
-            'name': name,
-            'quantity': qty,
-            'amount': amount,
-          });
-
-          grandTotal += amount;
-        }
+        reportData.add({
+          'serial': serial++,
+          'date': format.format(timestamp),
+          'productId': productId,
+          'productName': productName,
+          'rating': rating,
+          'review': review,
+        });
       }
     } catch (e) {
       print('Error generating report: $e');
@@ -218,6 +210,7 @@ class _TotalSalesPageState extends State<TotalSalesPage> {
     });
   }
 
+  // Function to generate and download the PDF report
   Future<void> downloadReportAsPDF() async {
     final pdf = pw.Document();
 
@@ -244,27 +237,19 @@ class _TotalSalesPageState extends State<TotalSalesPage> {
               ),
               pw.SizedBox(height: 20),
               pw.Table.fromTextArray(
-                headers: ['S.No', 'Date', 'Product Name', 'Qty', 'Amount (Rs.)'],
+                headers: ['S.No', 'Product ID', 'Product Name', 'Rating', 'Review'],
                 data: reportData.map((item) {
                   return [
                     item['serial'].toString(),
-                    item['date'],
-                    item['name'],
-                    item['quantity'].toString(),
-                    'Rs. ${item['amount'].toStringAsFixed(2)}',
+                    item['productId'],
+                    item['productName'],
+                    item['rating'].toString(),
+                    item['review'],
                   ];
                 }).toList(),
                 cellStyle: pw.TextStyle(fontSize: 10),
                 headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                 headerDecoration: pw.BoxDecoration(color: PdfColors.grey300),
-              ),
-              pw.SizedBox(height: 20),
-              pw.Align(
-                alignment: pw.Alignment.centerRight,
-                child: pw.Text(
-                  'Grand Total: Rs. ${grandTotal.toStringAsFixed(2)}',
-                  style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
-                ),
               ),
             ],
           );
@@ -273,7 +258,7 @@ class _TotalSalesPageState extends State<TotalSalesPage> {
     );
 
     final output = await getTemporaryDirectory();
-    final file = File("${output.path}/total_sales_report.pdf");
+    final file = File("${output.path}/review_sales_report.pdf");
 
     await file.writeAsBytes(await pdf.save());
     await OpenFile.open(file.path);
@@ -282,7 +267,7 @@ class _TotalSalesPageState extends State<TotalSalesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Total Sales Report'), backgroundColor: Colors.indigo),
+      appBar: AppBar(title: Text('Review Sales Report'), backgroundColor: Colors.indigo),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -321,18 +306,18 @@ class _TotalSalesPageState extends State<TotalSalesPage> {
                   child: DataTable(
                     columns: [
                       DataColumn(label: Text('S.No')),
-                      DataColumn(label: Text('Date')),
+                      DataColumn(label: Text('Product ID')),
                       DataColumn(label: Text('Product Name')),
-                      DataColumn(label: Text('Qty')),
-                      DataColumn(label: Text('Amount')),
+                      DataColumn(label: Text('Rating')),
+                      DataColumn(label: Text('Review')),
                     ],
                     rows: reportData.map((item) {
                       return DataRow(cells: [
                         DataCell(Text(item['serial'].toString())),
-                        DataCell(Text(item['date'])),
-                        DataCell(Text(item['name'])),
-                        DataCell(Text(item['quantity'].toString())),
-                        DataCell(Text('Rs. ${item['amount'].toStringAsFixed(2)}')),
+                        DataCell(Text(item['productId'])),
+                        DataCell(Text(item['productName'])),
+                        DataCell(Text(item['rating'].toString())),
+                        DataCell(Text(item['review'])),
                       ]);
                     }).toList(),
                   ),
@@ -343,21 +328,18 @@ class _TotalSalesPageState extends State<TotalSalesPage> {
                 padding: const EdgeInsets.only(top: 16.0),
                 child: ElevatedButton.icon(
                   onPressed: downloadReportAsPDF,
-                  icon: Icon(Icons.download, color: Colors.white), // icon color
-                  label: Text(
-                    'Download PDF',
-                    style: TextStyle(color: Colors.white), // text color
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.indigo, // button background color
-                    foregroundColor: Colors.white,  // sets text & icon color for other states too
-                  ),
+                  icon: Icon(Icons.download, color: Colors.white),
+                  label: Text('Download Report'),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo),
                 ),
               ),
-
           ],
         ),
       ),
     );
   }
+}
+
+void main() {
+  runApp(MaterialApp(home: ReviewReportPage()));
 }
