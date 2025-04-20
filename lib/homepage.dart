@@ -341,12 +341,19 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.notifications, color: Colors.black),
             onPressed: () {
+              // Get the current logged-in user's userId
+              final String userId = FirebaseAuth.instance.currentUser!.uid;
+
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => NotificationPage()),
+                MaterialPageRoute(builder: (context) => const NotificationPage()),
               );
+
+
+
             },
           ),
+
           IconButton(
             icon: const Icon(Icons.local_offer, color: Colors.black),
             onPressed: () {

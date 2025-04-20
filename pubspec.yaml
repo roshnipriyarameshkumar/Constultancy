@@ -46,7 +46,6 @@ dependencies:
   open_file: ^3.3.2
   fl_chart: ^0.70.2
   rxdart: ^0.28.0
-  razorpay_flutter: ^1.4.0
 
 
 

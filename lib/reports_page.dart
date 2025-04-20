@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'total_sales_page.dart';
-import 'order_sales_page.dart'; // Import the new report page
+import 'order_sales_page.dart';
+import 'review_report_page.dart'; // Import the new review report page
 
 class ReportsPage extends StatelessWidget {
   @override
@@ -15,6 +16,7 @@ class ReportsPage extends StatelessWidget {
       body: ListView(
         padding: EdgeInsets.all(16),
         children: [
+          // Total Sales Report Card
           Card(
             elevation: 4,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -31,6 +33,8 @@ class ReportsPage extends StatelessWidget {
               },
             ),
           ),
+
+          // Order Sales Report Card
           Card(
             elevation: 4,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -43,6 +47,24 @@ class ReportsPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => OrderSalesPage()),
+                );
+              },
+            ),
+          ),
+
+          // Review Report Card
+          Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: ListTile(
+              leading: Icon(Icons.reviews, color: Colors.indigo),
+              title: Text('Review Report', style: TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Text('View and generate PDF for product reviews'),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ReviewReportPage()),
                 );
               },
             ),
