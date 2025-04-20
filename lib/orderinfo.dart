@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,25 +11,45 @@ class OrderInfoPage extends StatelessWidget {
     int currentStage = stages.indexOf(status);
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: stages.map((stage) {
         int index = stages.indexOf(stage);
-        return Column(
-          children: [
-            Icon(
-              index <= currentStage ? Icons.check_circle : Icons.radio_button_unchecked,
-              color: index <= currentStage ? Colors.green : Colors.grey,
-              size: 30,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              stage,
-              style: TextStyle(
-                color: index <= currentStage ? Colors.green : Colors.grey,
-                fontWeight: FontWeight.w600,
+        bool isActive = index <= currentStage;
+
+        return Expanded(
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 14,
+                    backgroundColor: isActive ? Colors.green : Colors.grey.shade400,
+                    child: Icon(
+                      isActive ? Icons.check : Icons.radio_button_unchecked,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                  if (index < stages.length - 1)
+                    Expanded(
+                      child: Container(
+                        height: 2,
+                        color: currentStage >= index + 1 ? Colors.green : Colors.grey.shade300,
+                      ),
+                    ),
+                ],
               ),
-            ),
-          ],
+              const SizedBox(height: 6),
+              Text(
+                stage,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: isActive ? Colors.green : Colors.grey.shade600,
+                ),
+              ),
+            ],
+          ),
         );
       }).toList(),
     );
@@ -81,10 +102,10 @@ class OrderInfoPage extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: Colors.indigo,
+      backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
         title: const Text("My Orders", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.indigo.shade700,
+        backgroundColor: Colors.indigo.shade600,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -94,12 +115,12 @@ class OrderInfoPage extends StatelessWidget {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: Colors.white));
+            return const Center(child: CircularProgressIndicator(color: Colors.indigo));
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return const Center(
-              child: Text("No orders found.", style: TextStyle(color: Colors.white, fontSize: 16)),
+              child: Text("No orders found.", style: TextStyle(fontSize: 16)),
             );
           }
 
@@ -113,13 +134,14 @@ class OrderInfoPage extends StatelessWidget {
             });
 
           return ListView.builder(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(12),
             itemCount: sortedOrders.length,
             itemBuilder: (context, index) {
               final order = sortedOrders[index];
               final data = order.data() as Map<String, dynamic>;
               final status = data['deliveryStatus']?.toString() ?? "Placed";
               final orderId = order.id;
+              final totalAmount = data['totalAmount']?.toString() ?? '0';
 
               final Map<String, dynamic> productsMap =
               (data['products'] as Map<String, dynamic>? ?? {});
@@ -130,43 +152,62 @@ class OrderInfoPage extends StatelessWidget {
                   'name': product['name'] ?? '',
                   'quantity': product['quantity'] ?? 1,
                   'price': product['price']?.toString() ?? '0',
+                  'imageBase64': product['imageBase64'] ?? '',
                 };
               }).toList();
 
-              final totalAmount = data['totalAmount']?.toString() ?? '0';
-
               return Card(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                elevation: 4,
+                elevation: 6,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                margin: const EdgeInsets.symmetric(vertical: 10),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Order ID: $orderId", style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text("Order ID: $orderId",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16)),
                       const SizedBox(height: 6),
-                      Text("Total: ₹$totalAmount", style: const TextStyle(fontSize: 16)),
-                      const Divider(height: 20, thickness: 1),
-                      const Text("Products:", style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text("Total Amount: ₹$totalAmount",
+                          style: const TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.w500)),
+                      const Divider(height: 24),
+                      const Text("Products:",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15)),
                       const SizedBox(height: 6),
                       ...productList.map((product) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(child: Text(product['name'])),
-                              Text("Qty: ${product['quantity']}"),
-                              Text("₹${product['price']}"),
-                            ],
+                        final imageBase64 = product['imageBase64'];
+                        Widget imageWidget;
+
+                        if (imageBase64 != null && imageBase64.isNotEmpty) {
+                          imageWidget = Image.memory(
+                            base64Decode(imageBase64),
+                            height: 40,
+                            width: 40,
+                            fit: BoxFit.cover,
+                          );
+                        } else {
+                          imageWidget = const Icon(Icons.image_not_supported, size: 40);
+                        }
+
+                        return ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: imageWidget,
                           ),
+                          title: Text(product['name'], maxLines: 1, overflow: TextOverflow.ellipsis),
+                          subtitle: Text("Qty: ${product['quantity']}"),
+                          trailing: Text("₹${product['price']}"),
                         );
                       }).toList(),
                       const SizedBox(height: 12),
-                      const Text("Delivery Status:", style: TextStyle(fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 8),
+                      const Text("Delivery Status:",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15)),
+                      const SizedBox(height: 12),
                       buildTimeline(status),
                       const SizedBox(height: 12),
                       if (status == "Placed")
@@ -174,13 +215,12 @@ class OrderInfoPage extends StatelessWidget {
                           alignment: Alignment.centerRight,
                           child: ElevatedButton.icon(
                             onPressed: () => confirmDelete(context, orderId),
-                            icon: const Icon(Icons.cancel, color: Colors.white),
-                            label: const Text("Cancel Order", style: TextStyle(color: Colors.white)),
+                            icon: const Icon(Icons.cancel),
+                            label: const Text("Cancel Order"),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
+                              backgroundColor: Colors.redAccent,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
+                                  borderRadius: BorderRadius.circular(8)),
                             ),
                           ),
                         ),

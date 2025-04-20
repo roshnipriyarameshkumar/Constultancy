@@ -44,11 +44,23 @@ class InventoryManagementPage extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: Colors.indigo.shade100),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 2,
+                      blurRadius: 6,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: DataTable(
                   headingRowColor: MaterialStateProperty.all(Colors.indigo),
-                  headingTextStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                  dataRowHeight: 56,
+                  headingTextStyle: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                  dataRowHeight: 60,
                   columnSpacing: 24,
                   columns: const [
                     DataColumn(label: Text('S.No')),
@@ -68,7 +80,7 @@ class InventoryManagementPage extends StatelessWidget {
                           DataCell(Text('${index + 1}')),
                           DataCell(Text(
                             name,
-                            style: const TextStyle(fontWeight: FontWeight.w500),
+                            style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
                           )),
                           DataCell(
                             Text(
@@ -76,6 +88,7 @@ class InventoryManagementPage extends StatelessWidget {
                               style: TextStyle(
                                 color: qty <= 5 ? Colors.red : Colors.green,
                                 fontWeight: FontWeight.bold,
+                                fontSize: 14,
                               ),
                             ),
                           ),

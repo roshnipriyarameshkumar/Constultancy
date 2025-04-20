@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sample_app/Help_page.dart';
 import 'package:sample_app/terms_conditions.dart';
 
+import 'order_history_page.dart';
 import 'orderinfo.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -68,34 +69,43 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 20),
 
             // List of Options
+            // List of Options
             Expanded(
               child: ListView(
                 children: [
-                  _buildListTile(Icons.shopping_bag, 'Orders', () {
+                  _buildListTile(Icons.shopping_bag, 'Order Status', () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => OrderInfoPage(),
                       ),
                     );
-
                   }),
+
+                  _buildListTile(Icons.history, 'Order History', () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const OrderHistoryPage(), // Add const if the page is stateless
+                      ),
+                    );
+                  }),
+
+
 
                   _buildListTile(Icons.description, 'Terms and Conditions', () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) =>  const TermsAndConditions()),
+                      MaterialPageRoute(builder: (context) => const TermsAndConditions()),
                     );
-
-                    // Navigate to terms and conditions page
                   }),
+
                   _buildListTile(Icons.help_outline, 'Help', () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const HelpPage()),
                     );
                   }),
-
 
                   _buildListTile(Icons.exit_to_app, 'Sign Out', () async {
                     await FirebaseAuth.instance.signOut();
@@ -104,6 +114,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
             ),
+
           ],
         ),
       ),

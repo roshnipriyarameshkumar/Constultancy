@@ -128,7 +128,7 @@ class _CustomOrderPageState extends State<CustomOrderPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Custom Order'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.indigo,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -169,12 +169,16 @@ class _CustomOrderPageState extends State<CustomOrderPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.indigo,
+                    foregroundColor: Colors.white, // <-- this ensures white text
+                  ),
                   onPressed: _isSubmitting ? null : _submitOrder,
                   child: _isSubmitting
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text("Submit Custom Order"),
                 ),
+
               ),
             ],
           ),
