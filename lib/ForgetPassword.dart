@@ -75,7 +75,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       appBar: AppBar(
         title: const Text('Forgot Password'),
         centerTitle: true,
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.indigo,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -84,7 +84,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           children: [
             const Text(
               'Reset Your Password',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.teal),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.indigo),
             ),
             const SizedBox(height: 10),
             const Text(
@@ -111,7 +111,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               onPressed: _resetPassword,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                backgroundColor: Colors.teal,
+                backgroundColor: Colors.indigo,
                 elevation: 5,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
