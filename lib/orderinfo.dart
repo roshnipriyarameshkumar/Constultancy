@@ -165,9 +165,17 @@ class OrderInfoPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Order ID: $orderId",
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16)),
+                      Row(
+                        children: [
+                          const Text("Order ID: ",
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                          Flexible(
+                            child: Text(orderId,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontSize: 14)),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 6),
                       Text("Total Amount: ₹$totalAmount",
                           style: const TextStyle(
@@ -198,7 +206,11 @@ class OrderInfoPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                             child: imageWidget,
                           ),
-                          title: Text(product['name'], maxLines: 1, overflow: TextOverflow.ellipsis),
+                          title: Text(
+                            product['name'],
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                           subtitle: Text("Qty: ${product['quantity']}"),
                           trailing: Text("₹${product['price']}"),
                         );
