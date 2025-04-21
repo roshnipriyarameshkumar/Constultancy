@@ -214,7 +214,7 @@ class _PaymentPageState extends State<PaymentPage> {
     var options = {
       'key': _razorpayKeyId,
       'amount': (widget.totalAmount * 100).toInt(), // Amount in paise
-      'name': 'Your Textile App',
+      'name': 'Amsam Tex',
       'description': 'Payment for your order',
       'order_id': '', // Leave empty, Razorpay will generate it
       'prefill': {
