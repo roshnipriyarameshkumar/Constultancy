@@ -87,16 +87,28 @@ class _AdminPageState extends State<AdminPage> {
       builder: (context) {
         return AlertDialog(
           title: Text(_editingProductId == null ? "Add Product" : "Edit Product"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(controller: _nameController, decoration: InputDecoration(labelText: "Product Name")),
-              TextField(controller: _priceController, decoration: InputDecoration(labelText: "Price")),
-              TextField(controller: _quantityController, decoration: InputDecoration(labelText: "Quantity")),
-              TextField(controller: _descriptionController, decoration: InputDecoration(labelText: "Description")),
-              TextField(controller: _colorController, decoration: InputDecoration(labelText: "Color")),
-              ElevatedButton(onPressed: _pickImage, child: Text("Pick Image")),
-            ],
+          content: SingleChildScrollView( // Wrap the content in SingleChildScrollView
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(controller: _nameController, decoration: const InputDecoration(labelText: "Product Name")),
+                const SizedBox(height: 8), // Add some spacing
+                TextField(controller: _priceController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: "Price")),
+                const SizedBox(height: 8),
+                TextField(controller: _quantityController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: "Quantity")),
+                const SizedBox(height: 8),
+                TextField(controller: _descriptionController, maxLines: 2, decoration: const InputDecoration(labelText: "Description")),
+                const SizedBox(height: 8),
+                TextField(controller: _colorController, decoration: const InputDecoration(labelText: "Color")),
+                const SizedBox(height: 16),
+                ElevatedButton(onPressed: _pickImage, child: const Text("Pick Image")),
+                if (_imageBytes != null) // Show preview if image is picked
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Image.memory(_imageBytes!, height: 80),
+                  ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -104,7 +116,7 @@ class _AdminPageState extends State<AdminPage> {
                 Navigator.of(context).pop();
                 _resetForm();
               },
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -175,7 +187,7 @@ class _AdminPageState extends State<AdminPage> {
                   ? Image.memory(_convertBase64ToImage(productData['imageBase64']), width: 50, height: 50)
                   : null,
               title: Text(productData['name']),
-              subtitle: Text("Price: \$${productData['price']}"),
+              subtitle: Text("Price: \₹${productData['price']}"),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [

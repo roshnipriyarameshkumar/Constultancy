@@ -53,25 +53,31 @@ class AdminOrdersPage extends StatelessWidget {
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start, // Align items to the start
                         children: [
-                          Text(
-                            "Order ID: $orderId",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Colors.indigo,
+                          Expanded( // Make Order ID text take available space
+                            child: Text(
+                              "Order ID: $orderId",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.indigo,
+                              ),
                             ),
                           ),
                           if (isCustom)
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.orangeAccent,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Text(
-                                "Custom Order",
-                                style: TextStyle(color: Colors.white, fontSize: 12),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0), // Add some spacing
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.orangeAccent,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Text(
+                                  "Custom Order",
+                                  style: TextStyle(color: Colors.white, fontSize: 12),
+                                ),
                               ),
                             ),
                         ],
